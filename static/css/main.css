@@ -6,17 +6,19 @@ body     {
     margin : 25px 25px 25px 25px;
 }
 
-.question-box {
-    font-size : 20px;   
-    margin : 10px 10px 10px 10px;
-    width : 125px;
-    height : 125px;
-    background : #DDD;
-    color:black;
+.question {
+    font-size: 24px;   
+    margin: 10px 10px 10px 10px;
+    background: #EEE;
+    color: black;
 }
 
-.question-box a:link,
-.question-box a:visited {
-    color : black;
+.question a:link,
+.question a:visited {
+    color: black;
 }
 
+.q-desc {
+    font-size: 18px;
+    font-family: monospace;
+}

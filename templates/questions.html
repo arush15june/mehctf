@@ -1,18 +1,20 @@
 {% extends "layout.html" %}
 
 {% block body %}
-{% for Question_row in Questions | batch(3, "&nbsp") %}
-<div class = "questions d-flex flex-row justify-content-center">
-  {% for Question in Question_row %} 
-  <div class = "question-box">
-    <a href="/question/{{Question.id}}">
-        <div class = "p-2 text-center">
-          <span>{{Question.name}}</span>
-        </div>
-    </a>
+<div class = "questions">
+  <div class = "row">
+  {% for Question in Questions %}
+  <div class = 'col-xs-12 col-sm-12 col-md-3 col-lg-3'>
+    <div class = "card" style = "width: 20rem; margin: 10px 10px 10px 10px">
+      <div class = "card-block">
+        <h4 class="card-title">{{ Question.name }}</h4>
+        <p clas = "card-text">{{ Question.desc }}</p>
+        <a class = "card-link" href="/question/{{Question.id}}"><button class="btn btn-primary">View Question</button></a>
+      </div>
+    </div>
   </div>
   {% endfor %}
+  </div>
 </div>
-{% endfor %}
 
 {% endblock %}
