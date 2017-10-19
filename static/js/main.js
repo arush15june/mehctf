@@ -1,0 +1,26 @@
+function checkFlag() {
+  console.log("Checking Flag")
+  flag = $("#flag").val()
+  console.log("Flag Input: ",flag)
+  if( flag == "") {
+    console.log("Invalid Flag Input")
+    $("#validityText").html("Invalid Flag Input");
+    return;
+  }
+  flagValid = $.ajax({
+    dataType: 'json',
+    url: document.URL,
+    method: "POST",
+    data: {"flag" : flag}
+  });
+  flagValid.done(function(recvd){
+    if(recvd.correct == 1) {
+      console.log("Flag Correct")
+      $("#validityText").html("Flag Correct");
+    }
+    else if(recvd.correct == 0) {
+      console.log("Flag Incorrect")
+      $("#validityText").html("Flag Incorrect");
+    }
+  });
+}

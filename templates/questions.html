@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block body %}
+{% for Question_row in Questions | batch(3, "&nbsp") %}
+<div class = "questions d-flex flex-row justify-content-center">
+  {% for Question in Question_row %} 
+  <div class = "question-box">
+    <a href="/question/{{Question.id}}">
+        <div class = "p-2 text-center">
+          <span>{{Question.name}}</span>
+        </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+
+{% endblock %}
