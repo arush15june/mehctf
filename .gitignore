@@ -1,2 +1,4 @@
 /__pycache__/
 /ctf-fillup/
+questions.db
+questions.csv

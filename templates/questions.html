@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block title %}
+MehCTF | Questions
+{% endblock %}
+
 {% block body %}
 <div class = "questions">
   <div class = "row">
@@ -8,7 +12,7 @@
     <div class = "card" style = "width: 20rem; margin: 10px 10px 10px 10px">
       <div class = "card-block">
         <h4 class="card-title">{{ Question.name }}</h4>
-        <p clas = "card-text">{{ Question.desc }}</p>
+        <p clas = "card-text">{{ Question.desc | truncate(50) }}</p>
         <a class = "card-link" href="/question/{{Question.id}}"><button class="btn btn-primary">View Question</button></a>
       </div>
     </div>
