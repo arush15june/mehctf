@@ -11,14 +11,12 @@ MehCTF | Register
             <form action = '/register' method = "POST" class = "login-form">
                 {{ form.hidden_tag()}}
                 <div class = "form-group">
-                    <!-- <input class = "form-control" name = "username" placeholder = "Username" type = "text" /> -->
-                    {{ form.username.label }}{{ form.username(size=50) }}
+                    <input class = "form-control" name = "username" size='50' placeholder = "Username" type = "text" />
                 </div>
                 <div class = "form-group">
-                    <!-- <input class = "form-control" name = "password" placeholder = "Password" type = "text" /> -->
-                    {{ form.password.label }}{{ form.password(size=50) }}
+                    <input class = "form-control" name = "password" size='50' placeholder = "Password" type = "password" />
                 </div>
-                <button type = "submit" class = 'btn bg-secondary text-center'>Register</button>
+                    <center><button type = "submit" class = 'btn bg-secondary text-center'>Register</button></center>
                 </div>
             </form>
         </div>

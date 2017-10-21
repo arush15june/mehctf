@@ -2,7 +2,7 @@ from flask import Flask, flash, redirect, render_template, request, url_for, jso
 import helpers
 from forms import RegisterForm
 from database import init_db, db_session
-from flask_login import LoginManager, login_user, login_required, logout_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import models
 
 # Database
@@ -21,6 +21,10 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(username):
     return models.User.query.filter_by(username = username).first()
+
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect(url_for("login",next=request.endpoint))
 
 @app.teardown_appcontext # DB Session Config
 def shutdown_session(exception=None):
@@ -50,11 +54,13 @@ def home():
 
 
 @app.route('/questions', methods=["GET"])
+@login_required
 def questions():
   Questions = models.Question.query.all()
   return render_template('questions.html',Questions=Questions)
 
 @app.route("/question/<qno>", methods=["GET","POST"])
+@login_required
 def question(qno = None): 
   if request.method == "GET":
     if qno == None:
@@ -87,40 +93,56 @@ def register():
   elif request.method == "POST":
     if form.validate_on_submit():
       if models.User.query.filter_by(username=form.username.data).first():
+        user = models.User.query.filter_by(username=form.username.data).first()
+        login_user(user)
         return redirect(url_for("questions"))
       else:
         newUser = models.User(username=form.username.data, password=form.password.data)
+        app.logger.debug("New User :"+str(newUser)) 
         db_session.add(newUser)
         db_session.commit()
         
         login_user(newUser)
 
-        return redirect("/questions")
+        return redirect(url_for("questions"))
     else:
       abort(404)
 
-@app.route("/register", methods=["GET","POST"])
+@app.route("/login", methods=["GET","POST"])
 def login():
   form = RegisterForm()
 
   if request.method == 'GET':
-
       return render_template('login.html', form=form)
   elif request.method == 'POST':
-      if form.validate_on_submit():
-          
+      if form.validate_on_submit():        
           user = models.User.query.filter_by(username=form.username.data).first()
-
           if user:
-              if user.password == form.password.data:
+              if user.password   == form.password.data:
+                # correct username+password
+                  app.logger.debug("Logging in User: "+str(user))
                   login_user(user)
-                  # return "User logged in"                
+                  dest = request.args.get('next')
+                  try:
+                    dest_url = url_for(dest)
+                  except:
+                    return redirect(url_for("questions"))  
+                  return redirect(dest_url)                
               else:
-                  # return "Wrong password"            
+                # incorrect password
+                  return render_template("login.html", form=form, message="Incorrect Password!")        
           else:
-              # return "user doesn't exist"        
-    else:
-          # return "form not validated"
+            # user dosen't exist
+              return render_template("login.html", form=form, message="Incorrect Username or User Dosen't Exist!")        
+      else:
+        # invalid form
+        return render_template("login.html", form=form, message="Invalid Input!")
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("home"))
 
 if __name__ == '__main__':
   init_db()
