@@ -9,7 +9,7 @@ class Question(Base):
     flag = Column(String(200))
     filename = Column(String(1000))
 
-    def __init__(self, name, flag, desc, link="#"):
+    def __init__(self, name, flag, desc, filename="#"):
         self.name = name
         self.desc = desc
         self.flag = flag
