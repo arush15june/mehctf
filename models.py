@@ -7,13 +7,13 @@ class Question(Base):
     name = Column(String(50))
     desc = Column(String(1000))
     flag = Column(String(200))
-    link = Column(String(1000))
+    filename = Column(String(1000))
 
     def __init__(self, name, flag, desc, link="#"):
         self.name = name
         self.desc = desc
         self.flag = flag
-        self.link = link
+        self.filename = filename
 
     def __repr__(self):
         return '<Question {} Flag: {} Link: {}>'.format(self.name, self.flag, self.link)
@@ -39,6 +39,6 @@ class User(Base):
     @property
     def is_anonymous(self):
         return False
-    
+
     def get_id(self):
         return str(self.username)

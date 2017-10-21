@@ -32,7 +32,7 @@ MehCTF | {{Question.name}}
                 {{ Question.desc }}
             </p>
             {% if not Question.link == "#" %}
-                <a href = '{{ Question.link }}'><button class = "btn btn-link">Download</button></a>
+                <a href = '/download/{{ Question.id }}'><button class = "btn btn-link">Download</button></a>
             {% endif %}
         </div>
     </div>

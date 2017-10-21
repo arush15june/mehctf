@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, abort
 import helpers
+import os
 from forms import RegisterForm
 from database import init_db, db_session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -12,6 +13,7 @@ init_db()
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
+app.config['DOWNLOAD_FOLDER'] = 'downloads'
 app.config['PORT'] = 8080
 app.secret_key = "m3hCtF"
 
@@ -63,19 +65,19 @@ def questions():
   Questions = models.Question.query.all()
   return render_template('questions.html',Questions=Questions)
 
-@app.route("/question/<qno>", methods=["GET","POST"])
+@app.route("/question/<qid>", methods=["GET","POST"])
 @login_required
-def question(qno = None): 
+def question(qid = None): 
   if request.method == "GET":
-    if qno == None:
+    if qid == None:
       return abort(404)
-    reqdQuestion = models.Question.query.filter(models.Question.id == int(qno))[0]
+    reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))[0]
     app.logger.debug("Sending Question No "+str(reqdQuestion.id)+" flag: "+reqdQuestion.flag)
     return render_template("question.html",Question=reqdQuestion)
   elif request.method == "POST":
-    if qno == None:
+    if qid == None:
       return jsonify({'correct' : 0})
-    reqdQuestion = models.Question.query.filter(models.Question.id == int(qno))
+    reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))
     if not reqdQuestion:
       abort(404)
       
@@ -88,6 +90,24 @@ def question(qno = None):
       return jsonify({'correct' : 1})
 
     return jsonify({'correct' : 0})
+
+"""
+/download/<qid>
+send file to download for question with id : qid
+
+"""
+
+@app.route("/download/<int:qid>",methods=["GET","POST"])
+@login_required
+def download(qid):
+    reqdQuestion = models.Questions.filter_by(id=qid).first()
+    if not reqdQuestion:
+      return abort(404)
+    fileName = reqdQuestion.filename
+    if filename == "#":
+      return abort(404)
+    downloads  = os.path.join(current_app.root_path, app.config['DOWNLOAD_FOLDER'])
+    return send_from_directory(directory=downloads, filename=filename)
 
 @app.route("/register", methods=["GET","POST"])
 def register():

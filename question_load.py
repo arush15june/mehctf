@@ -18,7 +18,7 @@ Question.query.delete()
 questionsCSV = csv.DictReader(questions)
 
 for question in questionsCSV:
-    q = Question(name=question['name'],flag=question['flag'],desc=question['desc'],link=question['link'])
+    q = Question(name=question['name'],flag=question['flag'],desc=question['desc'],filename=question['filename'])
     db_session.add(q)
 
 questions.close()
