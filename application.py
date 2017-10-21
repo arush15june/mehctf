@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, abort
+from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, abort, send_from_directory
 import helpers
 import os
 from forms import RegisterForm
@@ -53,18 +53,31 @@ def add_header(r):
   r.headers['Cache-Control'] = 'public, max-age=0'
   return r
 
+"""
+/ (home)
+template - index.html
+"""
 @app.route('/', methods=["GET"])
 def home():
   form = RegisterForm()
   return render_template("index.html", form=form)
 
-
+"""
+/questions 
+Serve the list of all questions
+template - questions.html
+"""
 @app.route('/questions', methods=["GET"])
 @login_required
 def questions():
   Questions = models.Question.query.all()
   return render_template('questions.html',Questions=Questions)
 
+"""
+/question/<qid>
+Serve the question with id:<qid> + flag checking
+template - question.html
+"""
 @app.route("/question/<qid>", methods=["GET","POST"])
 @login_required
 def question(qid = None): 
@@ -94,21 +107,22 @@ def question(qid = None):
 """
 /download/<qid>
 send file to download for question with id : qid
-
 """
-
 @app.route("/download/<int:qid>",methods=["GET","POST"])
 @login_required
 def download(qid):
-    reqdQuestion = models.Questions.filter_by(id=qid).first()
+    reqdQuestion = models.Question.query.filter_by(id = qid).first()
     if not reqdQuestion:
       return abort(404)
-    fileName = reqdQuestion.filename
-    if filename == "#":
+    if reqdQuestion.filename == "#":
       return abort(404)
-    downloads  = os.path.join(current_app.root_path, app.config['DOWNLOAD_FOLDER'])
-    return send_from_directory(directory=downloads, filename=filename)
+    downloads  = os.path.join(app.root_path, app.config['DOWNLOAD_FOLDER'])
+    return send_from_directory(directory=downloads, filename=reqdQuestion.filename)
 
+"""
+/register
+template - register.html
+"""
 @app.route("/register", methods=["GET","POST"])
 def register():
   form = RegisterForm()
@@ -132,6 +146,10 @@ def register():
     else:
       abort(404)
 
+"""
+/login
+template - login.html
+"""
 @app.route("/login", methods=["GET","POST"])
 def login():
   form = RegisterForm()
@@ -162,6 +180,9 @@ def login():
         # invalid form
         return render_template("login.html", form=form, message="Invalid Input!")
 
+"""
+/login
+"""
 @app.route("/logout")
 @login_required
 def logout():
