@@ -11,6 +11,7 @@ MehCTF
             <h1 class = "header">The Meh-est CTF in all of the interwebs</h1>
         </div>
         <div class = "col-xs-12 col-sm-12 col-md-3 offset-md-3 col-lg-3 offset-lg-3 text-responsive">
+            {% if not user.is_authenticated %}
             <div class = 'login-container' style = 'padding-right : 1em'>   
                 <form action = '/login' method = "POST" class = "login-form">
                     {{ form.hidden_tag()}}
@@ -24,6 +25,9 @@ MehCTF
                     </div>
                 </form>
             </div>
+            {% else %}
+            <center><h3>Welcome, {{ user.username }}</h3></center>
+            {% endif %}
         </div>
     </div>
 </div>

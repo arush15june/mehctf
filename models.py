@@ -27,12 +27,18 @@ class User(Base):
         self.password = password
     def __repr__(self):
         return '<User {}>'.format(self.username)
-
+    
+    @property
     def is_authenticated(self):
         return True
+
+    @property
     def is_active(self):
         return True
+    
+    @property
     def is_anonymous(self):
         return False
+    
     def get_id(self):
         return str(self.username)
