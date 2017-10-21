@@ -6,19 +6,18 @@ MehCTF | Questions
 
 {% block body %}
 <div class = "questions">
-  <div class = "row">
+  <div class="row">
   {% for Question in Questions %}
-  <div class = 'col-xs-12 col-sm-12 col-md-3 col-lg-3'>
-    <div class = "card" style = "width: 20rem; margin: 10px 10px 10px 10px">
+  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 question">
+    <div class = "card" style = "width: 20rem; margin: 5px 5px 5px 5px">
       <div class = "card-block">
         <h4 class="card-title">{{ Question.name }}</h4>
         <p clas = "card-text">{{ Question.desc | truncate(50) }}</p>
-        <a class = "card-link" href="/question/{{Question.id}}"><button class="btn btn-primary">View Question</button></a>
+        <a class = "card-link" href="/question/{{Question.id}}"><button class="btn btn-link">View Question</button></a>
       </div>
     </div>
   </div>
   {% endfor %}
-  </div>
 </div>
 
 {% endblock %}

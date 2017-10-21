@@ -2,15 +2,15 @@ body     {
     font-family: 'Josefin Sans', sans-serif !important
 }
 
+.header {
+}
+
+
 .questions {
-    margin : 25px 25px 25px 25px;
+    margin : 10px 10px 10px 10px;
 }
 
 .question {
-    font-size: 24px;   
-    margin: 10px 10px 10px 10px;
-    background: #EEE;
-    color: black;
 }
 
 .question a:link,

@@ -19,18 +19,21 @@ MehCTF | {{Question.name}}
             &nbsp
             <input type="text" id = "flag" name="flag" class = "form-control" placeholder = "Enter flag" />
             &nbsp
-            <button class = "btn" onClick="checkFlag()">Check Flag</button>
+            <button class = "btn btn-secondary" onClick="checkFlag()">Check Flag</button>
             &nbsp
             <span id="validityText"></span>   
         </div>
     </div>
     <br />
     <div class = "row">
-        <div class = "col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class = "col-xs-12 col-sm-12 col-md-6 col-lg-6 text-responsive">
             <h3>Description</h3>
-            <blockquote>
+            <p>
                 {{ Question.desc }}
-            </blockquote>
+            </p>
+            {% if not Question.link == "#" %}
+                <a href = '{{ Question.link }}'><button class = "btn btn-link">Download</button></a>
+            {% endif %}
         </div>
     </div>
 </div>
