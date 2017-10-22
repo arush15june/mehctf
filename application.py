@@ -1,6 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, abort, send_from_directory
 import helpers
 import os
+import re
 from forms import RegisterForm
 from database import init_db, db_session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -88,8 +89,17 @@ def question(qid = None):
       abort(404)
     
     reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))[0]
+    # If the <filename> of the question contains link/ 
+    # at the start, replace it with "" and change toDownload 
+    # flag to flase, render template with link to the link 
+    # in filename instead of going to /download/<question_id>
+    toDownload = True
+    if "link/" in reqdQuestion.filename[:5]:
+      reqdQuestion.filename = reqdQuestion.filename.replace("link/","")
+      app.logger.debug("found link in file, putting link for "+reqdQuestion.filename)
+      toDownload = False
     app.logger.debug("Sending Question No "+str(reqdQuestion.id)+" flag: "+reqdQuestion.flag)
-    return render_template("question.html",Question=reqdQuestion)
+    return render_template("question.html",Question=reqdQuestion,toDownload=toDownload)
 
   elif request.method == "POST":
     # return incorrect answer when no qid is present
