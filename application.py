@@ -163,7 +163,7 @@ def scoreboard():
   
   scores = helpers.sortScoreDict(scores)
 
-  return render_template("scoreboard.html",scores=scores,noOfQuestions=noOfQuestions)
+  return render_template("scoreboard.html",scores=enumerate(scores.items()),noOfQuestions=noOfQuestions)
 
 """ AUTH ROUTES """
 
@@ -209,9 +209,12 @@ def login():
           user = models.User.query.filter_by(username=form.username.data).first()
           if user:
               if user.password   == form.password.data:
-                # correct username+password
-                  app.logger.debug("Logging in User: "+str(user))
-                  login_user(user)
+                  # correct username+password
+                  remember = False
+                  if request.form.get('remember') == 'on':
+                    remember = True
+                  app.logger.debug("Logging in User: "+str(user)+" Remmember: "+str(remember))
+                  login_user(user, remember=remember)
                   dest = request.args.get('next')
                   try:
                     dest_url = url_for(dest)

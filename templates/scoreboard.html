@@ -8,13 +8,15 @@ MehCTF | Scoreboard
 <table class="table">
     <thead>
         <tr>
+        <th>Rank</th>
         <th>Username</th>
         <th>Score</th>
         </tr>
     </thead>
-    <tbody style='font-size:1.5em'>
-    {% for userid, info in scores.items() %}
+    <tbody style='font-size:1.5em;font-family:Josefin Sans Light'>
+    {% for index, (userid, info) in scores %}
         <tr>
+        <td>{{ index+1 }}</td>
         <td>{{ info['user'].username }}</td>
         <td>{{ info['solved'] }}/{{ noOfQuestions }}</td>
         </tr>

@@ -2,6 +2,10 @@
     font-family: 'Josefin Sans';
     src: url(/static/fonts/JosefinSans-Regular.ttf);
 }
+@font-face {
+    font-family: 'Josefin Sans Light';
+    src: url(/static/fonts/JosefinSans-Light.ttf);
+}
 
 body {
     font-family: 'Josefin Sans', sans-serif !important
