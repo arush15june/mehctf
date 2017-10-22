@@ -60,7 +60,8 @@ template - index.html
 @app.route('/', methods=["GET"])
 def home():
   form = RegisterForm()
-  return render_template("index.html", form=form)
+  noOfQuestions = models.Question.query.count()
+  return render_template("index.html", form=form,noOfQuestions=noOfQuestions)
 
 """
 /questions 
@@ -71,7 +72,8 @@ template - questions.html
 @login_required
 def questions():
   Questions = models.Question.query.all()
-  return render_template('questions.html',Questions=Questions)
+  questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
+  return render_template('questions.html',Questions=Questions,questionsSolvedIDs=questionsSolvedIDs)
 
 """
 /question/<qid>
@@ -83,25 +85,47 @@ template - question.html
 def question(qid = None): 
   if request.method == "GET":
     if qid == None:
-      return abort(404)
+      abort(404)
+    
     reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))[0]
     app.logger.debug("Sending Question No "+str(reqdQuestion.id)+" flag: "+reqdQuestion.flag)
     return render_template("question.html",Question=reqdQuestion)
+
   elif request.method == "POST":
+    # return incorrect answer when no qid is present
     if qid == None:
       return jsonify({'correct' : 0})
+    
+    # return 404 
     reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))
     if not reqdQuestion:
       abort(404)
-      
+
+    # question <qid> to be checked
     reqdQuestion = reqdQuestion[0]
 
+    # return incorrect if flag is not present in form data
     if not request.form.get('flag'):
       return jsonify({'correct' : 0})
+
     app.logger.debug("Flag Recieved : "+request.form.get("flag"))  
+    
+    # check if recieved flag is equal to the flag of the question
     if request.form.get('flag') == reqdQuestion.flag:
+      # if the current_user solves question <qid> 
+      # associate that question with the current_user id
+      # using SolvedQuestion(date=dateime.datetime()) Association Object
+      # with the current date and time
+
+      solvedQues = models.SolvedQuestion()
+      solvedQues.question = reqdQuestion
+      current_user.solved_questions.append(solvedQues)
+      db_session.commit()
+
+      app.logger.debug(str(current_user)+" Solved Question "+str(reqdQuestion))
       return jsonify({'correct' : 1})
 
+    # else return incorrect answer
     return jsonify({'correct' : 0})
 
 """
@@ -113,9 +137,9 @@ send file to download for question with id : qid
 def download(qid):
     reqdQuestion = models.Question.query.filter_by(id = qid).first()
     if not reqdQuestion:
-      return abort(404)
+      abort(404)
     if reqdQuestion.filename == "#":
-      return abort(404)
+      abort(404)
     downloads  = os.path.join(app.root_path, app.config['DOWNLOAD_FOLDER'])
     return send_from_directory(directory=downloads, filename=reqdQuestion.filename)
 
@@ -136,7 +160,7 @@ def register():
         return redirect(url_for("questions"))
       else:
         newUser = models.User(username=form.username.data, password=form.password.data)
-        app.logger.debug("New User :"+str(newUser)) 
+        app.logger.debug("New User: "+str(newUser)) 
         db_session.add(newUser)
         db_session.commit()
         
@@ -181,7 +205,7 @@ def login():
         return render_template("login.html", form=form, message="Invalid Input!")
 
 """
-/login
+/logout
 """
 @app.route("/logout")
 @login_required

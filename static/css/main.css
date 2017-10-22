@@ -1,4 +1,9 @@
-body     {
+@font-face {
+    font-family: 'Josefin Sans';
+    src: url(/static/fonts/JosefinSans-Regular.ttf);
+}
+
+body {
     font-family: 'Josefin Sans', sans-serif !important
 }
 
