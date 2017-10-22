@@ -31,11 +31,21 @@ class User(Base):
     
     @property
     def is_anonymous(self):
-        return False
+        return False    
+
+    @property
+    def total_score(self):
+        if len(self.solved_questions) > 0:
+            total = 0
+            # return reduce(lambda total,solvedquestion: total + solvedquestion.question.points, self.solved_questions)
+            for solvedq in self.solved_questions:
+                total += solvedq.question.points
+            return total
+        else:
+            return 0
 
     def get_id(self):
         return str(self.username)
-
 class Question(Base):
     __tablename__ = 'questions'
     id = Column(Integer, primary_key=True)
@@ -43,12 +53,15 @@ class Question(Base):
     desc = Column(String(1000))
     flag = Column(String(200))
     points = Column(Integer)
+    category = Column(String(50))
     filename = Column(String(1000))
 
-    def __init__(self, name, flag, desc,points=0, filename="#"):
+    def __init__(self, name = "", flag = "", desc="", category = "", points=0, filename="#"):
         self.name = name
         self.desc = desc
         self.flag = flag
+        self.points = points
+        self.category = category
         self.filename = filename
 
     def __repr__(self):

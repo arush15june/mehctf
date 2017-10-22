@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, abort, send_from_directory
 import helpers
+from functools import reduce
 import os
 import re
 from forms import RegisterForm
@@ -158,8 +159,7 @@ def scoreboard():
   scores = {}
   noOfQuestions = models.Question.query.count()
   for user in models.User.query.all():
-    solved = len(user.solved_questions)
-    scores[user.get_id()] =  { 'solved' : solved, 'user' : user }
+    scores[user.get_id()] =  { 'username' : user.username, 'score': user.total_score }
   
   scores = helpers.sortScoreDict(scores)
 

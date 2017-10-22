@@ -33,7 +33,7 @@ MehCTF
             {% else %}
             <center>
                 <h3>Welcome, {{ user.username }}</h3>
-                <h3>Solved: {{user.solved_questions | length}}/{{noOfQuestions}}</h3>
+                <h3>Score: {{ user.total_score }}</h3>
             </center>
             {% endif %}
         </div>
