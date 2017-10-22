@@ -42,9 +42,10 @@ class Question(Base):
     name = Column(String(50))
     desc = Column(String(1000))
     flag = Column(String(200))
+    points = Column(Integer)
     filename = Column(String(1000))
 
-    def __init__(self, name, flag, desc, filename="#"):
+    def __init__(self, name, flag, desc,points=0, filename="#"):
         self.name = name
         self.desc = desc
         self.flag = flag
