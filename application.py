@@ -165,6 +165,13 @@ def scoreboard():
 
   return render_template("scoreboard.html",scores=enumerate(scores.items()),noOfQuestions=noOfQuestions)
 
+@app.route("/user/<username>",methods=["GET"])
+def user(username):
+  pass
+    
+
+
+
 """ AUTH ROUTES """
 
 """
@@ -242,4 +249,4 @@ def logout():
 
 if __name__ == '__main__':
   init_db()
-  app.run()
+  app.run(host="0.0.0.0")
