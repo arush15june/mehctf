@@ -143,6 +143,20 @@ def download(qid):
     downloads  = os.path.join(app.root_path, app.config['DOWNLOAD_FOLDER'])
     return send_from_directory(directory=downloads, filename=reqdQuestion.filename)
 
+@app.route("/scoreboard",methods=["GET"])
+def scoreboard():
+  scores = {}
+  noOfQuestions = models.Question.query.count()
+  for user in models.User.query.all():
+    solved = len(user.solved_questions)
+    scores[user.get_id()] =  { 'solved' : solved, 'user' : user }
+  
+  scores = helpers.sortScoreDict(scores)
+
+  return render_template("scoreboard.html",scores=scores,noOfQuestions=noOfQuestions)
+
+""" AUTH ROUTES """
+
 """
 /register
 template - register.html

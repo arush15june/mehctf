@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title %}
+MehCTF | Scoreboard
+{% endblock %}
+
+{% block body %}
+<table class="table">
+    <thead>
+        <tr>
+        <th>Username</th>
+        <th>Score</th>
+        </tr>
+    </thead>
+    <tbody style='font-size:1.5em'>
+    {% for userid, info in scores.items() %}
+        <tr>
+        <td>{{ info['user'].username }}</td>
+        <td>{{ info['solved'] }}/{{ noOfQuestions }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+
+
+{% endblock %}
