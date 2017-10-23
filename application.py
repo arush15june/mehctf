@@ -80,6 +80,14 @@ def add_header(r):
   r.headers['Cache-Control'] = 'public, max-age=0'
   return r
 
+# ADMI USER
+
+admin = User(username="arush15june", password="lovecharger", admin=True)
+db_session.add(admin)
+db_session.commit()
+
+###########
+
 """
 / (home)
 template - index.html
