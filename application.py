@@ -33,7 +33,7 @@ class UserView(CTFView):
   column_list = ['username', 'password', 'admin']
   column_searchable_list = ['username']
 class QuestionView(CTFView):
-  column_list = ['id', 'name', 'desc', 'flag', 'points', 'filename', 'hidden']
+  column_list = ['id', 'name', 'desc', 'flag', 'points', 'hide']
   column_list = ['id','name','desc','flag','filename']
 
 admin = Admin(app, name='Meh-CTF Admin', template_mode='bootstrap3')
@@ -298,7 +298,7 @@ if __name__ == '__main__':
   db_session.add(admin)
   db_session.commit()
   ###########
-  
+
   if os.environ.get('DATABASE_URL') is not None:
     app.run(host='0.0.0.0', port=80)
   else:
