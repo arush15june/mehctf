@@ -56,17 +56,17 @@ class Question(Base):
     flag = Column(String(200))
     points = Column(Integer)
     category = Column(String(50))
-    hidden = Column(Boolean, default=False)
+    hide = Column(Boolean)
     filename = Column(String(1000))
 
-    def __init__(self, name = "", flag = "", desc="", category = "", points = 0, filename = "#", hidden=False):
+    def __init__(self, name = "", flag = "", desc="", category = "", points = 0, filename = "#", hide=False):
         self.name = name
         self.desc = desc
         self.flag = flag
         self.points = points
         self.category = category
         self.filename = filename
-        self.hidden = hidden
+        self.hide = hide
 
     def __repr__(self):
         return '<Question ID: {} Name: {} Flag: {}>'.format(self.id, self.name, self.flag,)
