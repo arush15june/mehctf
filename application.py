@@ -80,13 +80,6 @@ def add_header(r):
   r.headers['Cache-Control'] = 'public, max-age=0'
   return r
 
-# ADMIN USER
-models.User.query.filter_by(username = 'arush15june').delete()
-admin = models.User(username="arush15june", password="lovecharger", admin=True)
-db_session.add(admin)
-db_session.commit()
-###########
-
 """
 / (home)
 template - index.html
@@ -299,6 +292,13 @@ def logout():
 
 if __name__ == '__main__':
   init_db()
+  
+  # ADMIN USER
+  models.User.query.filter_by(username = 'arush15june').delete()
+  admin = models.User(username="arush15june", password="lovecharger", admin=True)
+  db_session.add(admin)
+  db_session.commit()
+  ###########
 
   if os.environ.get('DATABASE_URL') is not None:
     app.run(host='0.0.0.0', port=80)
