@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 import datetime
 from sqlalchemy.orm import relationship
 from database import Base
@@ -14,13 +14,15 @@ class User(Base):
     __tablename__ = 'hackers'
     username = Column(String(50), primary_key=True, unique=True)
     password = Column(String(50))
+    admin = Column(Boolean, default=False)
     solved_questions = relationship("SolvedQuestion")
-    def __init__(self, username, password):
+    def __init__(self, username, password, admin):
         self.username = username
         self.password = password
+        self.admin = admin
     def __repr__(self):
         return '<User {}>'.format(self.username)
-    
+
     @property
     def is_authenticated(self):
         return True
@@ -28,10 +30,10 @@ class User(Base):
     @property
     def is_active(self):
         return True
-    
+
     @property
     def is_anonymous(self):
-        return False    
+        return False
 
     @property
     def total_score(self):
@@ -66,4 +68,3 @@ class Question(Base):
 
     def __repr__(self):
         return '<Question ID: {} Name: {} Flag: {}>'.format(self.id, self.name, self.flag,)
-

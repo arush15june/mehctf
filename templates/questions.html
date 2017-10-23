@@ -13,7 +13,7 @@ MehCTF | Questions
       <div class = "card-block">
         <h4 class="card-title">{{ Question.name }}{% if Question.id in questionsSolvedIDs %} | Solved{% endif %}</h4>
         <p clas = "card-text">{{ Question.category }} | {{ Question.points }} Points</p>
-        <p clas = "card-text">{{ Question.desc | truncate(50) }}</p>
+        <p clas = "card-text">{{ Question.desc | truncate(30) }}</p>
         <a class = "card-link" href="/question/{{Question.id}}"><button class="btn btn-link">View Question</button></a>
       </div>
     </div>

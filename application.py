@@ -1,4 +1,5 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, abort, send_from_directory
+from flask.ext.superadmin import Admin, BaseView, expose, AdminIndexView
 import helpers
 from functools import reduce
 import os
@@ -18,6 +19,15 @@ app.config['DEBUG'] = True
 app.config['DOWNLOAD_FOLDER'] = 'downloads'
 app.config['PORT'] = 8080
 app.secret_key = "m3hCtF"
+
+class MyView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.admin
+
+admin = Admin(app, 'Meh-CTF Admin', index_view=MyView() )
+admin.register(models.User, session=db_session)
+admin.register(models.Question, session=db_session)
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -66,7 +76,7 @@ def home():
   return render_template("index.html", form=form,noOfQuestions=noOfQuestions)
 
 """
-/questions 
+/questions
 Serve the list of all questions
 template - questions.html
 """
@@ -74,8 +84,9 @@ template - questions.html
 @login_required
 def questions():
   Questions = models.Question.query.all()
-  questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
-  return render_template('questions.html',Questions=Questions,questionsSolvedIDs=questionsSolvedIDs)
+  if(len(current_user.solved_questions) > 0):
+      questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
+  return render_template('questions.html', Questions=Questions, questionsSolvedIDs=questionsSolvedIDs)
 
 """
 /question/<qid>
@@ -84,15 +95,15 @@ template - question.html
 """
 @app.route("/question/<qid>", methods=["GET","POST"])
 @login_required
-def question(qid = None): 
+def question(qid = None):
   if request.method == "GET":
     if qid == None:
       abort(404)
-    
+
     reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))[0]
-    # If the <filename> of the question contains link/ 
-    # at the start, replace it with "" and change toDownload 
-    # flag to flase, render template with link to the link 
+    # If the <filename> of the question contains link/
+    # at the start, replace it with "" and change toDownload
+    # flag to flase, render template with link to the link
     # in filename instead of going to /download/<question_id>
     toDownload = True
     if "link/" in reqdQuestion.filename[:5]:
@@ -106,8 +117,8 @@ def question(qid = None):
     # return incorrect answer when no qid is present
     if qid == None:
       return jsonify({'correct' : 0})
-    
-    # return 404 
+
+    # return 404
     reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))
     if not reqdQuestion:
       abort(404)
@@ -119,11 +130,11 @@ def question(qid = None):
     if not request.form.get('flag'):
       return jsonify({'correct' : 0})
 
-    app.logger.debug("Flag Recieved : "+request.form.get("flag"))  
-    
+    app.logger.debug("Flag Recieved : "+request.form.get("flag"))
+
     # check if recieved flag is equal to the flag of the question
     if request.form.get('flag') == reqdQuestion.flag:
-      # if the current_user solves question <qid> 
+      # if the current_user solves question <qid>
       # associate that question with the current_user id
       # using SolvedQuestion(date=dateime.datetime()) Association Object
       # with the current date and time
@@ -160,7 +171,7 @@ def scoreboard():
   noOfQuestions = models.Question.query.count()
   for user in models.User.query.all():
     scores[user.get_id()] =  { 'username' : user.username, 'score': user.total_score }
-  
+
   scores = helpers.sortScoreDict(scores)
 
   return render_template("scoreboard.html",scores=enumerate(scores.items()),noOfQuestions=noOfQuestions)
@@ -168,7 +179,7 @@ def scoreboard():
 @app.route("/user/<username>",methods=["GET"])
 def user(username):
   pass
-    
+
 
 
 
@@ -187,15 +198,18 @@ def register():
     if form.validate_on_submit():
       if models.User.query.filter_by(username=form.username.data).first():
         user = models.User.query.filter_by(username=form.username.data).first()
-        login_user(user)
-        return redirect(url_for("questions"))
+        if form.password.data == user.password:
+          login_user(user)
+          return redirect(url_for("questions"))
+        else:
+          return render_template("register.html", form=form, message="User Already Exists!")
       else:
         newUser = models.User(username=form.username.data, password=form.password.data)
-        app.logger.debug("New User: "+str(newUser)) 
+        app.logger.debug("New User: "+str(newUser))
         db_session.add(newUser)
         db_session.commit()
-        
-        login_user(newUser)
+
+        login_user(newUser, remember=True)
 
         return redirect(url_for("questions"))
     else:
@@ -212,28 +226,25 @@ def login():
   if request.method == 'GET':
       return render_template('login.html', form=form)
   elif request.method == 'POST':
-      if form.validate_on_submit():        
+      if form.validate_on_submit():
           user = models.User.query.filter_by(username=form.username.data).first()
           if user:
-              if user.password   == form.password.data:
+              if user.password == form.password.data:
                   # correct username+password
-                  remember = False
-                  if request.form.get('remember') == 'on':
-                    remember = True
-                  app.logger.debug("Logging in User: "+str(user)+" Remmember: "+str(remember))
-                  login_user(user, remember=remember)
+                  app.logger.debug("Logging in User: "+str(user))
+                  login_user(user, remember=True)
                   dest = request.args.get('next')
                   try:
                     dest_url = url_for(dest)
                   except:
-                    return redirect(url_for("questions"))  
-                  return redirect(dest_url)                
+                    return redirect(url_for("questions"))
+                  return redirect(dest_url)
               else:
                 # incorrect password
-                  return render_template("login.html", form=form, message="Incorrect Password!")        
+                  return render_template("login.html", form=form, message="Incorrect Password!")
           else:
             # user dosen't exist
-              return render_template("login.html", form=form, message="Incorrect Username or User Dosen't Exist!")        
+              return render_template("login.html", form=form, message="Incorrect Username or User Dosen't Exist!")
       else:
         # invalid form
         return render_template("login.html", form=form, message="Invalid Input!")
