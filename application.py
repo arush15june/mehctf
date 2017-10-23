@@ -109,6 +109,7 @@ def questions():
   questionsSolvedIDs = []
   if(len(current_user.solved_questions) > 0):
       questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
+  app.logger.debug("Sending Questions: "+str(Questions))
   return render_template('questions.html', Questions=Questions, questionsSolvedIDs=questionsSolvedIDs)
 
 """
@@ -127,6 +128,8 @@ def question(qid = None):
     if not reqdQuestion:
       abort(404)
     reqdQuestion = reqdQuestion.first()
+    if reqdQuestion.is_hidden:
+      abort(404)
     # If the <filename> of the question contains link/
     # at the start, replace it with "" and change toDownload
     # flag to flase, render template with link to the link
