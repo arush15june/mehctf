@@ -70,3 +70,7 @@ class Question(Base):
 
     def __repr__(self):
         return '<Question ID: {} Name: {} Flag: {}>'.format(self.id, self.name, self.flag,)
+    
+    @property
+    def is_hidden(self):
+        return True

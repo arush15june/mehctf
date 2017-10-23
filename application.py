@@ -116,7 +116,10 @@ def question(qid = None):
     if qid == None:
       abort(404)
 
-    reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))[0]
+    reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))
+    if not reqdQuestion:
+      abort(404)
+    reqdQuestion = reqdQuestion.first()
     # If the <filename> of the question contains link/
     # at the start, replace it with "" and change toDownload
     # flag to flase, render template with link to the link
@@ -135,7 +138,7 @@ def question(qid = None):
       return jsonify({'correct' : 0})
 
     # return 404 when question is not in database
-    reqdQuestion = models.Question.query.filter_by(id == int(qid)).first()
+    reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))[0]
     if not reqdQuestion:
       abort(404)
 
@@ -181,13 +184,12 @@ def download(qid):
 @app.route("/scoreboard",methods=["GET"])
 def scoreboard():
   scores = {}
-  noOfQuestions = models.Question.query.count()
   for user in models.User.query.all():
     scores[user.get_id()] =  { 'username' : user.username, 'score': user.total_score }
 
   scores = helpers.sortScoreDict(scores)
 
-  return render_template("scoreboard.html",scores=enumerate(scores.items()),noOfQuestions=noOfQuestions)
+  return render_template("scoreboard.html",scores=enumerate(scores.items()))
 
 @app.route("/user/<string:username>",methods=["GET"])
 def user(username):

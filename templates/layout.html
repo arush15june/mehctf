@@ -25,6 +25,9 @@
             <a class="nav-item nav-link" href="/questions">Questions<span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="/user">Profile<span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="/logout">Logout<span class="sr-only">(current)</span></a>
+            {% if user.admin %}
+            <a class="nav-item nav-link" href="/admin">Admin<span class="sr-only">(current)</span></a>
+            {% endif %}
             {% endif %}
           </div>
         </div>
