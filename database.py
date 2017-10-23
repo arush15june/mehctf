@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 import os
 
 # Database
+engine = ""
 if os.environ.get('DATABASE_URL') is not None:
   engine = create_engine(os.environ['DATABASE_URL'], convert_unicode=True)
 else:
