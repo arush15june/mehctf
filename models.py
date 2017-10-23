@@ -59,7 +59,7 @@ class Question(Base):
     hidden = Column(Boolean, default=False)
     filename = Column(String(1000))
 
-    def __init__(self, name = "", flag = "", desc="", category = "", points=0, filename="#", hidden=False):
+    def __init__(self, name = "", flag = "", desc="", category = "", points = 0, filename = "#", hidden=False):
         self.name = name
         self.desc = desc
         self.flag = flag
@@ -70,7 +70,3 @@ class Question(Base):
 
     def __repr__(self):
         return '<Question ID: {} Name: {} Flag: {}>'.format(self.id, self.name, self.flag,)
-    
-    @property
-    def is_hidden(self):
-        return True
