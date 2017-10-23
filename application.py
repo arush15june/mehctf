@@ -290,13 +290,12 @@ def logout():
 if __name__ == '__main__':
   init_db()
   # ADMIN USER
-
-  admin = User(username="arush15june", password="lovecharger", admin=True)
+  admin = models.User(username="arush15june", password="lovecharger", admin=True)
   db_session.add(admin)
   db_session.commit()
 
   ###########
-  
+
   if os.environ.get('DATABASE_URL') is not None:
     app.run(host='0.0.0.0', port=80)
   else:
