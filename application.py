@@ -1,9 +1,9 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, abort, send_from_directory
-from flask.ext.superadmin import Admin, BaseView, expose, AdminIndexView
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 import helpers
 from functools import reduce
 import os
-import re
 from forms import RegisterForm
 from database import init_db, db_session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -15,19 +15,30 @@ init_db()
 # App Config
 
 app = Flask(__name__)
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
 app.config['DOWNLOAD_FOLDER'] = 'downloads'
 app.config['PORT'] = 8080
 app.secret_key = "m3hCtF"
 
-class MyView(AdminIndexView):
-    def is_accessible(self):
+class CTFView(ModelView):
+
+    def is_accessible(self):    
         return current_user.is_authenticated and current_user.admin
 
-admin = Admin(app, 'Meh-CTF Admin', index_view=MyView() )
-admin.register(models.User, session=db_session)
-admin.register(models.Question, session=db_session)
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('login', next=request.url))
 
+class UserView(CTFView):
+  column_list = ['username', 'password', 'admin']
+  column_searchable_list = ['username']
+class QuestionView(CTFView):
+  column_list = ['id', 'name', 'desc', 'flag', 'points', 'filename', 'hidden']
+  column_list = ['id','name','desc','flag','filename']
+
+admin = Admin(app, name='Meh-CTF Admin', template_mode='bootstrap3')
+admin.add_view(UserView(models.User, db_session))
+admin.add_view(QuestionView(models.Question, db_session))
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -46,11 +57,15 @@ def shutdown_session(exception=None):
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return render_template('404.html',message="Could Not Find Requested Content"), 404
 
 @app.context_processor
 def inject_user():
     return dict(user=current_user)
+  
+@app.template_filter('datetimeformat')
+def datetimeformat(value, format='%Y/%m/%d %H:%M'):
+    return value.strftime(format)
 
 # Prevent caching
 @app.after_request
@@ -84,6 +99,7 @@ template - questions.html
 @login_required
 def questions():
   Questions = models.Question.query.all()
+  questionsSolvedIDs = []
   if(len(current_user.solved_questions) > 0):
       questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
   return render_template('questions.html', Questions=Questions, questionsSolvedIDs=questionsSolvedIDs)
@@ -118,19 +134,16 @@ def question(qid = None):
     if qid == None:
       return jsonify({'correct' : 0})
 
-    # return 404
-    reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))
+    # return 404 when question is not in database
+    reqdQuestion = models.Question.query.filter_by(id == int(qid)).first()
     if not reqdQuestion:
       abort(404)
-
-    # question <qid> to be checked
-    reqdQuestion = reqdQuestion[0]
 
     # return incorrect if flag is not present in form data
     if not request.form.get('flag'):
       return jsonify({'correct' : 0})
 
-    app.logger.debug("Flag Recieved : "+request.form.get("flag"))
+    app.logger.debug("Flag Recieved : "+request.form.get("flag")+" For Question "+str(reqdQuestion))
 
     # check if recieved flag is equal to the flag of the question
     if request.form.get('flag') == reqdQuestion.flag:
@@ -176,10 +189,24 @@ def scoreboard():
 
   return render_template("scoreboard.html",scores=enumerate(scores.items()),noOfQuestions=noOfQuestions)
 
-@app.route("/user/<username>",methods=["GET"])
+@app.route("/user/<string:username>",methods=["GET"])
 def user(username):
-  pass
+  if not models.User.query.filter_by(username=username).first():
+    abort(404)
 
+  reqstdUser = models.User.query.filter_by(username=username).first()
+  app.logger.debug("Sending Userdata "+str(reqstdUser))
+  solvedAnyQuestion = len(reqstdUser.solved_questions)
+
+  return render_template("user.html", reqstdUser=reqstdUser, solvedAnyQuestion=solvedAnyQuestion)
+
+@app.route("/user/",methods=["GET"])
+@app.route("/user",methods=["GET"])
+def redirect_user():
+  if current_user.is_authenticated:
+    return redirect("/user/"+current_user.username)
+  else:
+    return redirect(url_for("home"))    
 
 
 

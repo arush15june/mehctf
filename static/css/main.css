@@ -11,6 +11,18 @@ body {
     font-family: 'Josefin Sans', sans-serif !important
 }
 
+input {
+    background: #EEE !important;
+    background-color:rgba(0, 0, 0, 0.0) !important;
+    outline: 0 !important;
+    border-width: 0 0 3px 0 !important;
+    border-radius : 0%;
+    border-color: #444 !important;
+}
+input:focus {
+    border-color: #999 !important;
+}
+
 .header {
 }
 
@@ -30,4 +42,17 @@ body {
 .q-desc {
     font-size: 18px;
     font-family: monospace;
+}
+
+.table-link:link,
+.table-link:visited {
+    font-weight: bold;
+    padding: 10px 10px 10px 10px;
+}
+
+
+.table-link:hover {
+    background : #222;
+    color : #FFF;
+    text-decoration: none;
 }

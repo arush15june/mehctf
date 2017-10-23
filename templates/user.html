@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+MehCTF | {{ reqstdUser.username }}
+{% endblock %}
+
+{% block body %}
+
+<div class = "jumbotron">
+    <div class = "text-center">
+        <h1>{{ reqstdUser.username }}</h1>
+        <h2>Points: {{ reqstdUser.total_score }}</h2>
+    </div>
+</div>
+{% if solvedAnyQuestion %}
+<table class="table">
+    <thead>
+        <tr>
+        <th>Question</th>
+        <th>Points</th>
+        <th>Solved On</th>
+        </tr>
+    </thead>
+    <tbody style='font-size:1.5em;font-family:Josefin Sans Light'>
+    {% for SolvedQuestion in user.solved_questions %}
+        <tr>
+        <td><a class = 'table-link' href='/question/{{ SolvedQuestion.question.id }}'>{{ SolvedQuestion.question.name }}</a></td>
+        <td>{{ SolvedQuestion.question.points }}</td>
+        <td>{{ SolvedQuestion.date | datetimeformat() }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% endif%}
+
+{% endblock %}
