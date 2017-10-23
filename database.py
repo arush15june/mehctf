@@ -5,7 +5,7 @@ import os
 
 # Database
 engine = None
-if os.environ.get('DATABASE_URL') is not None:
+if os.environ['DATABASE_URL'] is not None:
   engine = create_engine(os.environ['DATABASE_URL'], convert_unicode=True)
 else:
   engine = create_engine('sqlite:///questions.db', convert_unicode=True)
