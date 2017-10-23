@@ -48,6 +48,7 @@ class User(Base):
 
     def get_id(self):
         return str(self.username)
+    
 class Question(Base):
     __tablename__ = 'questions'
     id = Column(Integer, primary_key=True)
