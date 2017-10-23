@@ -290,7 +290,7 @@ def logout():
 if __name__ == '__main__':
   init_db()
   # ADMIN USER
-  models.User.query.filter(models.User.username == 'arush15june').delete()
+  models.User.query.filter_by(username = 'arush15june').delete()
   admin = models.User(username="arush15june", password="lovecharger", admin=True)
   db_session.add(admin)
   db_session.commit()
