@@ -289,7 +289,7 @@ def logout():
 
 if __name__ == '__main__':
   init_db()
-  if os.environ['DATABASE_URL'] is not None:
+  if os.environ.get('DATABASE_URL') is not None:
     app.run(host='0.0.0.0', port=80)
   else:
     app.run(host='0.0.0.0', port=5000)
