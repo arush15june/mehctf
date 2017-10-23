@@ -297,6 +297,13 @@ def logout():
     logout_user()
     return redirect(url_for("home"))
 
+init_db()
+if os.environ.get('DATABASE_URL') is not None:
+  app.run(host='0.0.0.0', port=80)
+else:
+  app.run(host='0.0.0.0', port=5000)
+
+
 if __name__ == '__main__':
   init_db()
   if os.environ.get('DATABASE_URL') is not None:
