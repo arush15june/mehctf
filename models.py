@@ -15,7 +15,7 @@ class User(Base):
     username = Column(String(50), primary_key=True, unique=True)
     password = Column(String(50))
     admin = Column(Boolean, default=False)
-    solved_questions = relationship("SolvedQuestion")
+    solved_questions = relationship("SolvedQuestion", cascade="save-update, merge, delete, delete-orphan")
     def __init__(self, username, password, admin=False):
         self.username = username
         self.password = password
