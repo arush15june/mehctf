@@ -18,6 +18,12 @@ app = Flask(__name__)
 app.config['DEBUG'] = False
 app.config['DOWNLOAD_FOLDER'] = 'downloads'
 app.config['PORT'] = 8080
+
+# Recaptcha Keys
+
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LcItjUUAAAAAIJnAqsuH3FOJm6mI5Y--ei7JXgl'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6LcItjUUAAAAAHBxk9C_QR6RLn4-49MNPoRDQuOG'
+
 app.secret_key = "m3hCtF"
 
 class CTFView(ModelView):
