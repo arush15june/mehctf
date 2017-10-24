@@ -25,7 +25,7 @@ MehCTF | {{ reqstdUser.username }}
         </tr>
     </thead>
     <tbody style='font-size:1.5em;font-family:Josefin Sans Light'>
-    {% for SolvedQuestion in user.solved_questions %}
+    {% for SolvedQuestion in reqstdUser.solved_questions %}
         <tr>
         <td><a class = 'table-link' href='/question/{{ SolvedQuestion.question.id }}'>{{ SolvedQuestion.question.name }}</a></td>
         <td>{{ SolvedQuestion.question.points }}</td>
@@ -33,7 +33,7 @@ MehCTF | {{ reqstdUser.username }}
         </tr>
     {% endfor %}
     </tbody>
-    </table>
+</table>
 {% endif%}
 
 {% endblock %}
