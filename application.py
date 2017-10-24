@@ -9,6 +9,12 @@ from database import init_db, db_session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import models
 
+# Recaptcha Keys
+
+RECAPTCHA_PUBLIC_KEY = '6LeYIbsSAAAAACRPIllxA7wvXjIE411PfdB2gt2J'
+RECAPTCHA_PRIVATE_KEY = '6LeYIbsSAAAAAJezaIq3Ft_hSTo0YtyeFG-JgRtu'
+
+
 # Database
 init_db()
 
@@ -228,25 +234,22 @@ def register():
     return render_template("register.html",form = form)
   elif request.method == "POST":
     if form.validate_on_submit():
-        if form.g-recaptcha-response == "6LcItjUUAAAAAHBxk9C_QR6RLn4-49MNPoRDQuOG":
-            if models.User.query.filter_by(username=form.username.data).first():
-              user = models.User.query.filter_by(username=form.username.data).first()
-              if form.password.data == user.password:
-                login_user(user)
-                return redirect(url_for("questions"))
-              else:
-                return render_template("register.html", form=form, message="User Already Exists!")
+        if models.User.query.filter_by(username=form.username.data).first():
+            user = models.User.query.filter_by(username=form.username.data).first()
+            if form.password.data == user.password:
+            login_user(user)
+            return redirect(url_for("questions"))
             else:
-              newUser = models.User(username=form.username.data, password=form.password.data)
-              app.logger.debug("New User: "+str(newUser))
-              db_session.add(newUser)
-              db_session.commit()
-
-              login_user(newUser, remember=True)
-
-              return redirect(url_for("questions"))
+            return render_template("register.html", form=form, message="User Already Exists!")
         else:
-          return render_template("register.html", form=form, message="Invalid Captcha")
+            newUser = models.User(username=form.username.data, password=form.password.data)
+            app.logger.debug("New User: "+str(newUser))
+            db_session.add(newUser)
+            db_session.commit()
+
+            login_user(newUser, remember=True)
+
+            return redirect(url_for("questions"))
     else:
       abort(404)
 
@@ -262,30 +265,27 @@ def login():
       return render_template('login.html', form=form)
   elif request.method == 'POST':
     if form.validate_on_submit():
-        if form.g-recaptcha-response == "6LcItjUUAAAAAHBxk9C_QR6RLn4-49MNPoRDQuOG":
-            user = models.User.query.filter_by(username=form.username.data).first()
-            if user:
-                if user.password == form.password.data:
-                    # correct username+password
-                    app.logger.debug("Logging in User: "+str(user))
-                    login_user(user, remember=True)
-                    dest = request.args.get('next')
-                    try:
-                      dest_url = url_for(dest)
-                    except:
-                      return redirect(url_for("questions"))
-                    return redirect(dest_url)
-                else:
-                  # incorrect password
-                    return render_template("login.html", form=form, message="Incorrect Password!")
+        user = models.User.query.filter_by(username=form.username.data).first()
+        if user:
+            if user.password == form.password.data:
+                # correct username+password
+                app.logger.debug("Logging in User: "+str(user))
+                login_user(user, remember=True)
+                dest = request.args.get('next')
+                try:
+                    dest_url = url_for(dest)
+                except:
+                    return redirect(url_for("questions"))
+                return redirect(dest_url)
             else:
-              # user dosen't exist
-                return render_template("login.html", form=form, message="Incorrect Username or User Dosen't Exist!")
+                # incorrect password
+                return render_template("login.html", form=form, message="Incorrect Password!")
         else:
-          return render_template("login.html", form=form, message="Invalid Captcha")                
+            # user dosen't exist
+            return render_template("login.html", form=form, message="Incorrect Username or User Dosen't Exist!")
     else:
-        # invalid form
         return render_template("login.html", form=form, message="Invalid Input!")
+
 
 """
 /logout

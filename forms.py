@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, RecaptchaField
 from wtforms.validators import DataRequired
 
 
@@ -8,6 +8,7 @@ class RegisterForm(FlaskForm):
                             validators=[DataRequired()])
     password = PasswordField('Password',
                             validators=[DataRequired()])
+    recaptcha = RecaptchaField()
     submit = SubmitField('Submit')
 
 class ChangePasswordForm(FlaskForm):
