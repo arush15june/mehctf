@@ -10,6 +10,9 @@ MehCTF | {{ reqstdUser.username }}
     <div class = "text-center">
         <h1>{{ reqstdUser.username }}</h1>
         <h2>Points: {{ reqstdUser.total_score }}</h2>
+        {% if user.is_authenticated and user.username == reqstdUser.username %}
+        <h2><a style ='font-weight:bold!important;color:black!important;text-decoration:none!important;outline:0!important;' href = '/change'>Change Password</a></h2>
+        {% endif %}
     </div>
 </div>
 {% if solvedAnyQuestion %}

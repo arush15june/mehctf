@@ -4,7 +4,7 @@ from flask_admin.contrib.sqla import ModelView
 import helpers
 from functools import reduce
 import os
-from forms import RegisterForm
+from forms import RegisterForm, ChangePasswordForm
 from database import init_db, db_session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import models
@@ -290,6 +290,43 @@ def logout():
     logout_user()
     return redirect(url_for("home"))
 
+"""
+/change
+Change passwords
+"""
+@app.route("/change", methods=["GET","POST"])
+@login_required
+def change():
+  form = ChangePasswordForm()
+
+  if request.method == "GET":
+    return render_template("change.html", form=form)
+
+  elif request.method == "POST":
+    oldPass = form.oldpassword.data
+    newPass = form.newpassword.data
+    newPassReType = form.newpasswordretype.data
+    if form.validate_on_submit():
+      # Return error if no input is received
+      if oldPass is None or newPass is None or newPassReType is None:
+        return render_template("change.html",form=form, message="Invalid Input")
+      
+      # Return error if oldPass dosen't match DB pass
+      if not current_user.password == oldPass:
+        return render_template("change.html",form=form, message="Incorrect Password")
+      
+      # Return error if newPass and newPassReType dosen't match
+      if not newPass == newPassReType:
+        return render_template("change.html",form=form, message="Incorrect Input: Passwords not matching")
+  
+      current_user.password = newPass
+      db_session.commit()
+      return render_template("change.html",form=form, message="Password Changed")  
+
+    else:
+      return render_template("change.html", form=form, message="Invalid Input")  
+      
+      
 if __name__ == '__main__':
   init_db()
   

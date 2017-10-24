@@ -9,3 +9,11 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password',
                             validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class ChangePasswordForm(FlaskForm):
+    oldpassword = PasswordField('Current Password',
+                            validators=[DataRequired()])
+    newpassword = PasswordField('New Password',
+                            validators=[DataRequired()])
+    newpasswordretype = PasswordField('Retype New Password',
+                            validators=[DataRequired()])
