@@ -15,7 +15,7 @@ MehCTF | Scoreboard
     </thead>
     <tbody class = "scoreboard-row" style='font-size:1.5em;font-family:Josefin Sans Light'>
     {% for index, (userid, info) in scores %}
-        {% if not userid.is_admin}
+        {% if not userid.is_admin %}
         <tr>
         <td>{{ index+1 }}</td>
         <td><a class="table-link" href='/user/{{ info['username'] }}'>{{ info['username'] }}</a></td>
