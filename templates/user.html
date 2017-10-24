@@ -26,11 +26,13 @@ MehCTF | {{ reqstdUser.username }}
     </thead>
     <tbody style='font-size:1.5em;font-family:Josefin Sans Light'>
     {% for SolvedQuestion in reqstdUser.solved_questions %}
-        <tr>
-        <td><a class = 'table-link' href='/question/{{ SolvedQuestion.question.id }}'>{{ SolvedQuestion.question.name }}</a></td>
-        <td>{{ SolvedQuestion.question.points }}</td>
-        <td>{{ SolvedQuestion.date | datetimeformat() }}</td>
-        </tr>
+        {% if not SolvedQuestion.question.is_hidden %}
+            <tr>
+            <td><a class = 'table-link' href='/question/{{ SolvedQuestion.question.id }}'>{{ SolvedQuestion.question.name }}</a></td>
+            <td>{{ SolvedQuestion.question.points }}</td>
+            <td>{{ SolvedQuestion.date | datetimeformat() }}</td>
+            </tr>
+        {% endif %}
     {% endfor %}
     </tbody>
 </table>
