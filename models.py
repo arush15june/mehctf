@@ -41,7 +41,7 @@ class User(Base):
             total = 0
             # return reduce(lambda total,solvedquestion: total + solvedquestion.question.points, self.solved_questions)
             for solvedq in self.solved_questions:
-                if solvedq.is_hidden:
+                if solvedq.question.is_hidden:
                     continue
                 total += solvedq.question.points
             return total
