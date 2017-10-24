@@ -9,12 +9,6 @@ from database import init_db, db_session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import models
 
-# Recaptcha Keys
-
-RECAPTCHA_PUBLIC_KEY = '6LcItjUUAAAAAIJnAqsuH3FOJm6mI5Y--ei7JXgl'
-RECAPTCHA_PRIVATE_KEY = '6LcItjUUAAAAAHBxk9C_QR6RLn4-49MNPoRDQuOG'
-
-
 # Database
 init_db()
 
