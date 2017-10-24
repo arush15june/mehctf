@@ -194,7 +194,9 @@ def download(qid):
 def scoreboard():
   scores = {}
   for user in models.User.query.all():
-    scores[user.get_id()] =  { 'username' : user.username, 'score': user.total_score, 'is_admin' : user.is_admin }
+    if user.is_admin:
+      continue
+    scores[user.get_id()] =  { 'username' : user.username, 'score': user.total_score }
 
   scores = helpers.sortScoreDict(scores)
 
