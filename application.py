@@ -228,22 +228,25 @@ def register():
     return render_template("register.html",form = form)
   elif request.method == "POST":
     if form.validate_on_submit():
-      if models.User.query.filter_by(username=form.username.data).first():
-        user = models.User.query.filter_by(username=form.username.data).first()
-        if form.password.data == user.password:
-          login_user(user)
-          return redirect(url_for("questions"))
+        if form.g-recaptcha-response == "6LcItjUUAAAAAHBxk9C_QR6RLn4-49MNPoRDQuOG":
+            if models.User.query.filter_by(username=form.username.data).first():
+              user = models.User.query.filter_by(username=form.username.data).first()
+              if form.password.data == user.password:
+                login_user(user)
+                return redirect(url_for("questions"))
+              else:
+                return render_template("register.html", form=form, message="User Already Exists!")
+            else:
+              newUser = models.User(username=form.username.data, password=form.password.data)
+              app.logger.debug("New User: "+str(newUser))
+              db_session.add(newUser)
+              db_session.commit()
+
+              login_user(newUser, remember=True)
+
+              return redirect(url_for("questions"))
         else:
-          return render_template("register.html", form=form, message="User Already Exists!")
-      else:
-        newUser = models.User(username=form.username.data, password=form.password.data)
-        app.logger.debug("New User: "+str(newUser))
-        db_session.add(newUser)
-        db_session.commit()
-
-        login_user(newUser, remember=True)
-
-        return redirect(url_for("questions"))
+          return render_template("register.html", form=form, message="Invalid Captcha")
     else:
       abort(404)
 
@@ -258,26 +261,29 @@ def login():
   if request.method == 'GET':
       return render_template('login.html', form=form)
   elif request.method == 'POST':
-      if form.validate_on_submit():
-          user = models.User.query.filter_by(username=form.username.data).first()
-          if user:
-              if user.password == form.password.data:
-                  # correct username+password
-                  app.logger.debug("Logging in User: "+str(user))
-                  login_user(user, remember=True)
-                  dest = request.args.get('next')
-                  try:
-                    dest_url = url_for(dest)
-                  except:
-                    return redirect(url_for("questions"))
-                  return redirect(dest_url)
-              else:
-                # incorrect password
-                  return render_template("login.html", form=form, message="Incorrect Password!")
-          else:
-            # user dosen't exist
-              return render_template("login.html", form=form, message="Incorrect Username or User Dosen't Exist!")
-      else:
+    if form.validate_on_submit():
+        if form.g-recaptcha-response == "6LcItjUUAAAAAHBxk9C_QR6RLn4-49MNPoRDQuOG":
+            user = models.User.query.filter_by(username=form.username.data).first()
+            if user:
+                if user.password == form.password.data:
+                    # correct username+password
+                    app.logger.debug("Logging in User: "+str(user))
+                    login_user(user, remember=True)
+                    dest = request.args.get('next')
+                    try:
+                      dest_url = url_for(dest)
+                    except:
+                      return redirect(url_for("questions"))
+                    return redirect(dest_url)
+                else:
+                  # incorrect password
+                    return render_template("login.html", form=form, message="Incorrect Password!")
+            else:
+              # user dosen't exist
+                return render_template("login.html", form=form, message="Incorrect Username or User Dosen't Exist!")
+        else:
+          return render_template("login.html", form=form, message="Invalid Captcha")                
+    else:
         # invalid form
         return render_template("login.html", form=form, message="Invalid Input!")
 
