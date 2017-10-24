@@ -237,10 +237,10 @@ def register():
         if models.User.query.filter_by(username=form.username.data).first():
             user = models.User.query.filter_by(username=form.username.data).first()
             if form.password.data == user.password:
-            login_user(user)
-            return redirect(url_for("questions"))
+                login_user(user)
+                return redirect(url_for("questions"))
             else:
-            return render_template("register.html", form=form, message="User Already Exists!")
+                return render_template("register.html", form=form, message="User Already Exists!")
         else:
             newUser = models.User(username=form.username.data, password=form.password.data)
             app.logger.debug("New User: "+str(newUser))
