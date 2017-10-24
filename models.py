@@ -47,7 +47,9 @@ class User(Base):
             return total
         else:
             return 0
-
+    @property
+    def is_admin(self):
+        return self.admin
     def get_id(self):
         return str(self.username)
     
