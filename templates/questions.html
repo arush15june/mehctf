@@ -16,7 +16,7 @@ MehCTF | Questions
   {% for Question in Questions %}
   {% if Question.is_hidden == false %}
   <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 question">
-    <div class = "card" style = "width: 20rem; margin: 5px 5px 5px 5px">
+    <div class = "card" style = "width: 10rem; margin: 5px 5px 5px 5px">
       <div class = "card-block">
         <h4 class="card-title">{{ Question.name }}{% if Question.id in questionsSolvedIDs %} | Solved{% endif %}</h4>
         <p clas = "card-text text-center">{{ Question.category }} | {{ Question.points }} Points</p>
