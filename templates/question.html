@@ -32,7 +32,7 @@ MehCTF | {{Question.name}}
         <div class = "col-xs-12 col-sm-12 col-md-6 col-lg-6 text-responsive">
             <h3>Description</h3>
             <p>
-                {{ Question.desc }}
+                {{ Question.desc|safe }}
             </p>
             {% if not Question.filename == "#" %}
                 {% if toDownload %}
