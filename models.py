@@ -9,7 +9,7 @@ class SolvedQuestion(Base):
         question_id = Column(Integer, ForeignKey('questions.id', ondelete="CASCADE"), primary_key=True)
 
         date = Column(DateTime, default=datetime.datetime.utcnow)
-        question = relationship("Question", passive_deletes=True)
+        question = relationship("Question")
 
 class User(Base):
     __tablename__ = 'hackers'
