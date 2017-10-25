@@ -6,7 +6,7 @@ from database import Base
 class SolvedQuestion(Base):
         __tablename__ = 'solved_questions'
         username = Column(String(50), ForeignKey('hackers.username'), primary_key=True)
-        question_id = Column(Integer, ForeignKey('questions.id', ondelete="CASCADE"), primary_key=True, nullable=true)
+        question_id = Column(Integer, ForeignKey('questions.id', ondelete="CASCADE"), primary_key=True, nullable=True)
         date = Column(DateTime, default=datetime.datetime.utcnow)
         question = relationship("Question", single_parent=True)
 
