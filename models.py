@@ -8,7 +8,7 @@ class SolvedQuestion(Base):
         username = Column(String(50), ForeignKey('hackers.username'), primary_key=True)
         question_id = Column(Integer, ForeignKey('questions.id', ondelete="CASCADE"), primary_key=True)
         date = Column(DateTime, default=datetime.datetime.utcnow)
-        question = relationship("Question")
+        question = relationship("Question", single_parent=True)
 
 class User(Base):
     __tablename__ = 'hackers'
