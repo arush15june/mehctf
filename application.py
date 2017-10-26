@@ -26,6 +26,10 @@ app.config['RECAPTCHA_PRIVATE_KEY'] = '6LcItjUUAAAAAHBxk9C_QR6RLn4-49MNPoRDQuOG'
 
 app.secret_key = "m3hCtF"
 
+"""
+Admin Views
+"""
+# Basic Flask-Admin View Model
 class CTFView(ModelView):
 
     def is_accessible(self):    
@@ -35,17 +39,25 @@ class CTFView(ModelView):
         # redirect to login page if user doesn't have access
         return redirect(url_for('login', next=request.url))
 
+# Flask-Admin View For User Model
 class UserView(CTFView):
   column_list = ['username', 'password', 'admin']
   column_searchable_list = ['username']
+# Flask-Admin View For Question Model
 class QuestionView(CTFView):
   column_list = ['id', 'name', 'desc', 'flag', 'points', 'hide']
   column_list = ['id','name','desc','flag','filename']
-
+  
+"""
+Flask-Admin Config
+"""
 admin = Admin(app, name='Meh-CTF Admin', template_mode='bootstrap3')
 admin.add_view(UserView(models.User, db_session))
 admin.add_view(QuestionView(models.Question, db_session))
 
+"""
+Flask-Login Config
+"""
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -57,19 +69,25 @@ def load_user(username):
 def unauthorized_callback():
     return redirect(url_for("login",next=request.endpoint))
 
+"""
+SQLAlchemy Flask Config
+"""
 @app.teardown_appcontext # DB Session Config
 def shutdown_session(exception=None):
     db_session.remove()
 
+"""
+Flask Config
+"""
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found(e): # Custom 404 Handler
     return render_template('404.html',message="Could Not Find Requested Content"), 404
 
 @app.context_processor
-def inject_user():
+def inject_user(): # Inject user data for the layout in every page
     return dict(user=current_user)
   
-@app.template_filter('datetimeformat')
+@app.template_filter('datetimeformat') # Format DateTime For Scoreboard
 def datetimeformat(value, format='%Y/%m/%d %H:%M'):
     return value.strftime(format)
 
@@ -104,11 +122,15 @@ template - questions.html
 @app.route('/questions', methods=["GET"])
 def questions():
   Questions = models.Question.query.all()
+  """
+  questionSolvedIDs contains IDs of all questions solved by current_user
+  """
   questionsSolvedIDs = []
   if current_user.is_authenticated:
     if(len(current_user.solved_questions) > 0):
         questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
   app.logger.debug("Sending Questions: "+str(Questions))
+
   return render_template('questions.html', Questions=Questions, questionsSolvedIDs=questionsSolvedIDs)
 
 """
@@ -119,14 +141,15 @@ template - question.html
 @app.route("/question/<qid>", methods=["GET","POST"])
 def question(qid = None):
   if request.method == "GET":
-    if qid == None:
+    # Question Display Frontend
+    if qid == None: # qid is not passed
       abort(404)
 
     reqdQuestion = models.Question.query.filter(models.Question.id == int(qid))
-    if not reqdQuestion:
+    if not reqdQuestion: # qid is invalid
       abort(404)
-    reqdQuestion = reqdQuestion.first()
-    if reqdQuestion.is_hidden:
+    reqdQuestion = reqdQuestion.first() 
+    if reqdQuestion.is_hidden: # Question<qid> is hidden in database
       abort(404)
     # If the <filename> of the question contains link/
     # at the start, replace it with "" and change toDownload
@@ -141,6 +164,7 @@ def question(qid = None):
     return render_template("question.html",Question=reqdQuestion,toDownload=toDownload)
 
   elif request.method == "POST":
+    # Flag Checking Backend
     # return incorrect answer when no qid is present
     if qid == None:
       return jsonify({'correct' : 0})
@@ -182,6 +206,10 @@ send file to download for question with id : qid
 """
 @app.route("/download/<int:qid>",methods=["GET","POST"])
 def download(qid):
+  """
+    every question contains a parameter called filename,
+    which is used to serve files for questions
+  """  
     reqdQuestion = models.Question.query.filter_by(id = qid).first()
     if not reqdQuestion:
       abort(404)
@@ -192,6 +220,10 @@ def download(qid):
 
 @app.route("/scoreboard",methods=["GET"])
 def scoreboard():
+  """
+    Does not display admin users in the scoreboard
+    TODO: Rank Collision solution by datetime > score
+  """
   scores = {}
   for user in models.User.query.all():
     if user.is_admin:
@@ -199,24 +231,33 @@ def scoreboard():
     scores[user.get_id()] =  { 'username' : user.username, 'score': user.total_score }
 
   scores = helpers.sortScoreDict(scores)
-
+  """
+    enumerate generates indices(ranks) for the orderedDict
+  """
   return render_template("scoreboard.html",scores=enumerate(scores.items()))
+"""
+/user/<username>
+/user/
+/user
 
+Serve a user profile with solved questions and change password link for authenticated user
+on its own profile
+"""
 @app.route("/user/<string:username>",methods=["GET"])
 def user(username):
-  if not models.User.query.filter_by(username=username).first():
+  if not models.User.query.filter_by(username=username).first(): # username dosen't exists
     abort(404)
 
   reqstdUser = models.User.query.filter_by(username=username).first()
   app.logger.debug("Sending Userdata "+str(reqstdUser))
-  solvedAnyQuestion = len(reqstdUser.solved_questions)
+  solvedAnyQuestion = len(reqstdUser.solved_questions) # check if user solved any question
 
   return render_template("user.html", reqstdUser=reqstdUser, solvedAnyQuestion=solvedAnyQuestion)
 
 @app.route("/user/",methods=["GET"])
 @app.route("/user",methods=["GET"])
 def redirect_user():
-  if current_user.is_authenticated:
+  if current_user.is_authenticated: 
     return redirect("/user/"+current_user.username)
   else:
     return redirect(url_for("home"))    
@@ -337,14 +378,7 @@ def change():
       
 if __name__ == '__main__':
   init_db()
-  
-  # # ADMIN USER
-  # models.User.query.filter_by(username = 'arush15june').delete()
-  # admin = models.User(username="arush15june", password="lovecharger", admin=True)
-  # db_session.add(admin)
-  # db_session.commit()
-  # ###########
-
+  # Heroku has a DATABASE_URL environment var for the Database URL
   if os.environ.get('DATABASE_URL') is not None:
     app.run(host='0.0.0.0', port=80)
   else:
