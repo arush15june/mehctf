@@ -4,10 +4,11 @@
     "start_url": ".",
     "display": "standalone",
     "background_color": "#34495e",
+    "theme_color" : "#34495e",
     "description": "The Meh-est CTF in all of the interwebs",
     "icons": [{
       "src": "/static/favicon.png",
-      "sizes": "512x512",
+      "sizes": "256x256",
       "type": "image/png"
     }],
     "related_applications": [{
