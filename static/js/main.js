@@ -36,3 +36,9 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  console.log('beforeinstallprompt Event fired');
+  e.preventDefault();
+  return false;
+});
