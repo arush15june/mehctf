@@ -206,10 +206,10 @@ send file to download for question with id : qid
 """
 @app.route("/download/<int:qid>",methods=["GET","POST"])
 def download(qid):
-  """
-    every question contains a parameter called filename,
-    which is used to serve files for questions
-  """  
+    """
+      every question contains a parameter called filename,
+      which is used to serve files for questions
+    """  
     reqdQuestion = models.Question.query.filter_by(id = qid).first()
     if not reqdQuestion:
       abort(404)
