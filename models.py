@@ -84,6 +84,6 @@ class Question(Base):
     @property
     def solved_by(self):
         try:
-            return SolvedQuestions.query.filter(SolvedQuestions.question.id == self.id).count()
+            return SolvedQuestion.query.filter(SolvedQuestion.question_id == self.id).count()
         except:
             return 0
