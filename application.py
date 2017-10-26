@@ -163,7 +163,7 @@ def question(qid = None):
       # using SolvedQuestion(date=dateime.datetime()) Association Object
       # with the current date and time
 
-      if current_user.is_authenticated;
+      if current_user.is_authenticated:
         solvedQues = models.SolvedQuestion()
         solvedQues.question = reqdQuestion
         current_user.solved_questions.append(solvedQues)
