@@ -102,12 +102,12 @@ Serve the list of all questions
 template - questions.html
 """
 @app.route('/questions', methods=["GET"])
-@login_required
 def questions():
   Questions = models.Question.query.all()
   questionsSolvedIDs = []
-  if(len(current_user.solved_questions) > 0):
-      questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
+  if current_user.is_authenticated:
+    if(len(current_user.solved_questions) > 0):
+        questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
   app.logger.debug("Sending Questions: "+str(Questions))
   return render_template('questions.html', Questions=Questions, questionsSolvedIDs=questionsSolvedIDs)
 
@@ -117,7 +117,6 @@ Serve the question with id:<qid> + flag checking
 template - question.html
 """
 @app.route("/question/<qid>", methods=["GET","POST"])
-@login_required
 def question(qid = None):
   if request.method == "GET":
     if qid == None:
@@ -164,10 +163,11 @@ def question(qid = None):
       # using SolvedQuestion(date=dateime.datetime()) Association Object
       # with the current date and time
 
-      solvedQues = models.SolvedQuestion()
-      solvedQues.question = reqdQuestion
-      current_user.solved_questions.append(solvedQues)
-      db_session.commit()
+      if current_user.is_authenticated;
+        solvedQues = models.SolvedQuestion()
+        solvedQues.question = reqdQuestion
+        current_user.solved_questions.append(solvedQues)
+        db_session.commit()
 
       app.logger.debug(str(current_user)+" Solved Question "+str(reqdQuestion))
       return jsonify({'correct' : 1})
@@ -180,7 +180,6 @@ def question(qid = None):
 send file to download for question with id : qid
 """
 @app.route("/download/<int:qid>",methods=["GET","POST"])
-@login_required
 def download(qid):
     reqdQuestion = models.Question.query.filter_by(id = qid).first()
     if not reqdQuestion:
