@@ -80,3 +80,10 @@ class Question(Base):
     @property
     def is_hidden(self):
         return self.hide
+
+    @property
+    def solved_by(self):
+        try:
+            return SolvedQuestions.query.filter(SolvedQuestions.question.id == self.id).count()
+        except:
+            return 0
