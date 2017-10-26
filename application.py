@@ -187,7 +187,7 @@ def download(qid):
     if reqdQuestion.filename == "#":
       abort(404)
     downloads  = os.path.join(app.root_path, app.config['DOWNLOAD_FOLDER'])
-    return send_from_directory(directory=downloads, filename=reqdQuestion.filename)
+    return send_from_directory(directory=downloads, filename=reqdQuestion.filename, as_attachement=True, attachment_filename=reqdQuestion.filename)
 
 @app.route("/scoreboard",methods=["GET"])
 def scoreboard():
