@@ -8,3 +8,9 @@ http://mehctf.herokuapp.com
 2. Make a venv
 3. pip install -r requirements.txt
 4. gunicorn application:app
+
+# Admin User
+
+1. Register a normal User
+2. Edit admin.py with your username
+3. run admin.py
