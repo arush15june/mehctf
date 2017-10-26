@@ -155,9 +155,10 @@ def question(qid = None):
       return jsonify({'correct' : 0})
 
     app.logger.debug("Flag Recieved : "+request.form.get("flag")+" For Question "+str(reqdQuestion))
+    recvdFlag = request.form.get("flag").strip()
 
     # check if recieved flag is equal to the flag of the question
-    if request.form.get('flag') == reqdQuestion.flag:
+    if recvdFlag == reqdQuestion.flag:
       # if the current_user solves question <qid>
       # associate that question with the current_user id
       # using SolvedQuestion(date=dateime.datetime()) Association Object
