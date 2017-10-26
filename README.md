@@ -13,4 +13,4 @@ http://mehctf.herokuapp.com
 
 1. Register a normal User
 2. Edit admin.py with your username
-3. run admin.py
+3. run register_admin.py
