@@ -1,3 +1,11 @@
+"""
+
+MehCTF - Successive Questions Branch
+Questions appear to the user in a defined order defined by a variable
+ORDER which contains lists inside a list
+
+"""
+
 from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, abort, send_from_directory
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -25,6 +33,9 @@ app.config['RECAPTCHA_PUBLIC_KEY'] = '6LcItjUUAAAAAIJnAqsuH3FOJm6mI5Y--ei7JXgl'
 app.config['RECAPTCHA_PRIVATE_KEY'] = '6LcItjUUAAAAAHBxk9C_QR6RLn4-49MNPoRDQuOG'
 
 app.secret_key = "m3hCtF"
+
+# STAGES VAR
+STAGES = [ [1,2], [3,4], [5,6] ]
 
 """
 Admin Views
@@ -121,17 +132,25 @@ template - questions.html
 """
 @app.route('/questions', methods=["GET"])
 def questions():
-  Questions = models.Question.query.all()
-  """
-  questionSolvedIDs contains IDs of all questions solved by current_user
-  """
-  questionsSolvedIDs = []
-  if current_user.is_authenticated:
-    if(len(current_user.solved_questions) > 0):
-        questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
-  app.logger.debug("Sending Questions: "+str(Questions))
+    """
+    questionSolvedIDs contains IDs of all questions solved by current_user
+    """
+    questionsSolvedIDs = []
+    QuestionsToDisplay = []
+    if current_user.is_authenticated:
+        if(len(current_user.solved_questions) > 0):
+            questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
 
-  return render_template('questions.html', Questions=Questions, questionsSolvedIDs=questionsSolvedIDs)
+        for stage in STAGES[:current_user.stage + 1]:
+            print(stage)
+            for qid in stage:
+                print(qid)
+                QuestionsToDisplay.append(models.Question.query.filter_by(id=qid).first())
+                
+    print(QuestionsToDisplay)                    
+    app.logger.debug("Sending Questions: "+str(QuestionsToDisplay))
+
+    return render_template('questions.html', Questions=QuestionsToDisplay, questionsSolvedIDs=questionsSolvedIDs)
 
 """
 /question/<qid>
@@ -151,6 +170,10 @@ def question(qid = None):
     reqdQuestion = reqdQuestion.first() 
     if reqdQuestion.is_hidden: # Question<qid> is hidden in database
       abort(404)
+
+    if current_user.is_authenticated:
+        if not current_user.question_access(qid):
+            abort(404)    
     # If the <filename> of the question contains link/
     # at the start, replace it with "" and change toDownload
     # flag to flase, render template with link to the link
@@ -189,6 +212,8 @@ def question(qid = None):
       # with the current date and time
 
       if current_user.is_authenticated:
+        if current_user.is_current_stage_complete:
+          current_user.stage += 1
         solvedQues = models.SolvedQuestion()
         solvedQues.question = reqdQuestion
         current_user.solved_questions.append(solvedQues)

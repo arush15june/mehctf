@@ -8,7 +8,7 @@ class RegisterForm(FlaskForm):
                             validators=[DataRequired()])
     password = PasswordField('Password',
                             validators=[DataRequired()])
-    recaptcha = RecaptchaField()
+    # recaptcha = RecaptchaField()
     submit = SubmitField('Submit')
 
 class ChangePasswordForm(FlaskForm):

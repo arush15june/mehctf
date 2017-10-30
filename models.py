@@ -3,11 +3,12 @@ import datetime
 from sqlalchemy.orm import relationship
 from database import Base
 
+STAGES = [ [1,2], [3,4], [5,6] ]
+
 class SolvedQuestion(Base):
         __tablename__ = 'solved_questions'
         username = Column(String(50), ForeignKey('hackers.username'), primary_key=True)
         question_id = Column(Integer, ForeignKey('questions.id', ondelete="CASCADE"), primary_key=True)
-
         date = Column(DateTime, default=datetime.datetime.utcnow)
         question = relationship("Question")
 
@@ -15,12 +16,14 @@ class User(Base):
     __tablename__ = 'hackers'
     username = Column(String(50), primary_key=True, unique=True)
     password = Column(String(50))
+    stage = Column(Integer, default=1)
     admin = Column(Boolean, default=False)
     solved_questions = relationship("SolvedQuestion", cascade="save-update, merge, delete, delete-orphan")
-    def __init__(self, username, password, admin=False):
+    def __init__(self, username, password, admin=False, stage=0):
         self.username = username
         self.password = password
         self.admin = admin
+        self.stage = stage
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
@@ -51,6 +54,34 @@ class User(Base):
     @property
     def is_admin(self):
         return self.admin
+    
+    @property
+    def current_stage(self):
+        return self.stage
+
+    @property
+    def is_current_stage_complete(self):
+        if self.stage == len(STAGES):
+            return False
+        questionsSolvedIDs = []
+        if(len(self.solved_questions) > 0):
+            questionsSolvedIDs = [solved.question.id for solved in self.solved_questions]
+
+        allCurrentStageQuestions = [ (qid) for stage in range(self.stage+1) for qid in STAGES[stage]]
+        
+        for qid in questionsSolvedIDs:
+            if qid not in allStageQuestions:
+                return False
+        else:
+            return False
+        return True
+
+    def question_access(self, qid):
+        allCurrentStageQuestions = [ (qid) for stage in range(self.stage+1) for qid in STAGES[stage]]
+        if qid in allCurrentStageQuestions:
+            return True
+        
+        return False
     def get_id(self):
         return str(self.username)
     
