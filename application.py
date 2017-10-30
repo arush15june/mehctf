@@ -142,9 +142,7 @@ def questions():
             questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
 
         for stage in STAGES[:current_user.stage + 1]:
-            print(stage)
             for qid in stage:
-                print(qid)
                 QuestionsToDisplay.append(models.Question.query.filter_by(id=qid).first())
                 
     print(QuestionsToDisplay)                    
