@@ -78,12 +78,12 @@ class User(Base):
             return False
 
         allCurrentStageQuestions = [ (qid) for stage in range(self.stage+1) for qid in STAGES[stage]]
-        
-        for qid in questionsSolvedIDs:
-            if qid not in allCurrentStageQuestions:
+        completion = True
+        for qid in allCurrentStageQuestions:
+            if not qid in questionsSolvedIDs:
                 return False
 
-        return True
+        return completion
 
     def question_access(self, qid):
         allCurrentStageQuestions = [ (qid) for stage in range(self.stage+1) for qid in STAGES[stage]]
