@@ -138,10 +138,6 @@ def questions():
     questionsSolvedIDs = []
     QuestionsToDisplay = []
     if current_user.is_authenticated:
-        if current_user.is_current_stage_complete:
-            current_user.stage += 1
-            db_session.commit()
-
         if(len(current_user.solved_questions) > 0):
             questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
 
@@ -153,8 +149,8 @@ def questions():
                 
     print(QuestionsToDisplay)                    
     app.logger.debug("Sending Questions: "+str(QuestionsToDisplay))
-
-    return render_template('questions.html', Questions=QuestionsToDisplay, questionsSolvedIDs=questionsSolvedIDs)
+    stagesLen = len(STAGES)
+    return render_template('questions.html', Questions=QuestionsToDisplay, questionsSolvedIDs=questionsSolvedIDs, noStages=stagesLen)
 
 """
 /question/<qid>

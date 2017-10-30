@@ -18,12 +18,15 @@ class User(Base):
     password = Column(String(50))
     stage = Column(Integer, default=1)
     admin = Column(Boolean, default=False)
+    joined_on = Column(DateTime, default=datetime.datetime.utcnow)
     solved_questions = relationship("SolvedQuestion", cascade="save-update, merge, delete, delete-orphan")
     def __init__(self, username, password, admin=False, stage=0):
         self.username = username
         self.password = password
         self.admin = admin
         self.stage = stage
+        self.joined_on = datetime.datetime.utcnow()
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
@@ -61,20 +64,26 @@ class User(Base):
 
     @property
     def is_current_stage_complete(self):
-        if self.stage == len(STAGES):
+        if not STAGES:
             return False
+
+        if self.stage == len(STAGES)-1:
+            return False
+
         questionsSolvedIDs = []
         if(len(self.solved_questions) > 0):
             questionsSolvedIDs = [solved.question.id for solved in self.solved_questions]
-            
+
+        if questionsSolvedIDs == []:
+            return False
+
         allCurrentStageQuestions = [ (qid) for stage in range(self.stage+1) for qid in STAGES[stage]]
         
         for qid in questionsSolvedIDs:
             if qid not in allCurrentStageQuestions:
                 return False
-        else:
-            return True
-        return False
+
+        return True
 
     def question_access(self, qid):
         allCurrentStageQuestions = [ (qid) for stage in range(self.stage+1) for qid in STAGES[stage]]

@@ -9,6 +9,11 @@ MehCTF | Questions
   <div class = "col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
     <h3>Flag Format: infox{.....} or DCTF{......} or infoXpression{.....} or meh{.....}ctf</h3>
   </div>
+  {% if user.is_authenticated %}
+  <div class = "col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <h4>Current Stage: {{ user.stage + 1 }}/{{ noStages }}</h4>
+  </div>
+  {% endif %}
 </div>
 
 <div class = "questions">
