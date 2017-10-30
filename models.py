@@ -66,15 +66,15 @@ class User(Base):
         questionsSolvedIDs = []
         if(len(self.solved_questions) > 0):
             questionsSolvedIDs = [solved.question.id for solved in self.solved_questions]
-
+            
         allCurrentStageQuestions = [ (qid) for stage in range(self.stage+1) for qid in STAGES[stage]]
         
         for qid in questionsSolvedIDs:
-            if qid not in allStageQuestions:
+            if qid not in allCurrentStageQuestions:
                 return False
         else:
-            return False
-        return True
+            return True
+        return False
 
     def question_access(self, qid):
         allCurrentStageQuestions = [ (qid) for stage in range(self.stage+1) for qid in STAGES[stage]]

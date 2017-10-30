@@ -138,11 +138,17 @@ def questions():
     questionsSolvedIDs = []
     QuestionsToDisplay = []
     if current_user.is_authenticated:
+        if current_user.is_current_stage_complete:
+            current_user.stage += 1
+            db_session.commit()
+
         if(len(current_user.solved_questions) > 0):
             questionsSolvedIDs = [solved.question.id for solved in current_user.solved_questions]
 
-        for stage in STAGES[:current_user.stage + 1]:
+        for stage in STAGES[:current_user.stage+1]:
+            print(stage)
             for qid in stage:
+                print(qid)
                 QuestionsToDisplay.append(models.Question.query.filter_by(id=qid).first())
                 
     print(QuestionsToDisplay)                    
@@ -155,7 +161,7 @@ def questions():
 Serve the question with id:<qid> + flag checking
 template - question.html
 """
-@app.route("/question/<qid>", methods=["GET","POST"])
+@app.route("/question/<int:qid>", methods=["GET","POST"])
 def question(qid = None):
   if request.method == "GET":
     # Question Display Frontend
@@ -170,7 +176,7 @@ def question(qid = None):
       abort(404)
 
     if current_user.is_authenticated:
-        if not current_user.question_access(qid):
+        if not current_user.question_access(int(qid)):
             abort(404)    
     # If the <filename> of the question contains link/
     # at the start, replace it with "" and change toDownload
@@ -210,12 +216,13 @@ def question(qid = None):
       # with the current date and time
 
       if current_user.is_authenticated:
-        if current_user.is_current_stage_complete:
-          current_user.stage += 1
         solvedQues = models.SolvedQuestion()
         solvedQues.question = reqdQuestion
         current_user.solved_questions.append(solvedQues)
         db_session.commit()
+        if current_user.is_current_stage_complete:
+            current_user.stage += 1
+            db_session.commit()
 
       app.logger.debug(str(current_user)+" Solved Question "+str(reqdQuestion))
       return jsonify({'correct' : 1})
