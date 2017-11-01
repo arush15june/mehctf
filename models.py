@@ -2,8 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 import datetime
 from sqlalchemy.orm import relationship
 from database import Base
-
-STAGES = [ [1,2], [3,4], [5,6] ]
+from stages import *
 
 class SolvedQuestion(Base):
         __tablename__ = 'solved_questions'
