@@ -228,7 +228,8 @@ def scoreboard():
   for user in models.User.query.all():
     if user.is_admin:
       continue
-    scores[user.get_id()] =  { 'username' : user.username, 'score': user.total_score, 'last_question_date': user.solved_questions[len(user.solved_questions)-1].date if len(user.solved_questions) > 0 else [] }
+    user.solved_questions = list(filter(lambda x: not x.question.hide, user.solved_questions))
+    scores[user.get_id()] =  { 'username' : user.username, 'score': user.total_score, 'last_question_date': user.solved_questions[len(user.solved_questions)-1].date if len(user.solved_questions) > 0 else datetime.dateime.min }
 
   scores = helpers.sortScoreDict(scores)
   """
