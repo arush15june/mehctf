@@ -223,7 +223,6 @@ def download(qid):
 def scoreboard():
   """
     Does not display admin users in the scoreboard
-    TODO: Rank Collision solution by datetime > score
   """
   scores = {}
   for user in models.User.query.all():
