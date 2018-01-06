@@ -228,7 +228,7 @@ def scoreboard():
   for user in models.User.query.all():
     if user.is_admin:
       continue
-    scores[user.get_id()] =  { 'username' : user.username, 'score': user.total_score, 'solved_questions': user.solved_questions }
+    scores[user.get_id()] =  { 'username' : user.username, 'score': user.total_score, 'last_question_date': user.solved_questions[len(user.solved_questions)-1].date }
 
   scores = helpers.sortScoreDict(scores)
   """
@@ -251,7 +251,7 @@ def user(username):
   reqstdUser = models.User.query.filter_by(username=username).first()
   app.logger.debug("Sending Userdata "+str(reqstdUser))
   solvedAnyQuestion = len(reqstdUser.solved_questions) # check if user solved any question
-  reqstdUser.solved_questions = helpers.sortSolvedQuesDict(reqstdUser.solved_questions)
+  reqstdUser.solved_questions = helpers.sortSolvedQuesList(reqstdUser.solved_questions)
 
   return render_template("user.html", reqstdUser=reqstdUser, solvedAnyQuestion=solvedAnyQuestion)
 
