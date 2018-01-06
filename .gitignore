@@ -4,3 +4,5 @@
 questions.db
 questions.csv
 ctf-fillup.zip
+*.pyc
+/ctf/

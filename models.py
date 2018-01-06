@@ -51,6 +51,7 @@ class User(Base):
     @property
     def is_admin(self):
         return self.admin
+    
     def get_id(self):
         return str(self.username)
     
