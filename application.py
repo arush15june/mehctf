@@ -90,7 +90,7 @@ def inject_user(): # Inject user data for the layout in every page
   
 @app.template_filter('datetimeformat') # Format DateTime For Scoreboard
 def datetimeformat(value, format='%Y/%m/%d %H:%M'):
-    return value.strftime(format)
+    return (value+datetime.timedelta(hours=5,minutes=30)).strftime(format)
 
 # Prevent caching
 @app.after_request
@@ -170,6 +170,7 @@ def question(qid = None):
         solvedq = solvedqs[0]
         solver = {'username' : solvedq.username, 'solved_on' : solvedq.date}
         solvedByList.append(solver)
+    solvedByList = sorted(solvedByList, key=lambda solver: solver['solved_on'])
 
     app.logger.debug("Sending Question No "+str(reqdQuestion.id)+" flag: "+reqdQuestion.flag)
     return render_template("question.html",Question=reqdQuestion, toDownload=toDownload, solvedByList=solvedByList)

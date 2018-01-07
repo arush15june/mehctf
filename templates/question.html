@@ -26,19 +26,17 @@ MehCTF | {{Question.name}}
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body text-responsive" style='overflow:auto'>
                             <table class="table">
                                     <thead>
-                                        <tr>
                                         <th>Username</th>
                                         <th>Solved On</th>
-                                        </tr>
                                     </thead>
                                     <tbody class = "scoreboard-row" style='font-size:1.5em;font-family:Josefin Sans Light'>
                                     {% for solver in solvedByList %}
                                         <tr>
                                         <td><a class="table-link" href='/user/{{ solver.username }}'>{{ solver.username }}</a></td>
-                                        <td>{{ solver.solved_on }}</td>
+                                        <td>{{ solver.solved_on | datetimeformat() }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -80,6 +78,4 @@ MehCTF | {{Question.name}}
         </div>
     </div>
 </div>
-
-
 {% endblock %}
