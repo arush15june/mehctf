@@ -6,7 +6,8 @@
   <meta charset = "utf-8">
   <title>{% block title %}{% endblock %}</title>
   <link rel="stylesheet" type="text/css" href="/static/css/main.css">
-  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+  <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous"> -->
   <link rel="manifest" href="/static/js/manifest.json">
   <link rel="icon" type="image/png" href="/static/favicon.png" />
   <script src="/static/js/jquery.js"></script>
@@ -48,12 +49,7 @@
 
   {% block body %}
   {% endblock %}
-
-  <div style="color:black" class = 'row'>
-    <div class = 'col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center'>
-      <span>From The House of <a style = 'text-decoration:none' href='http://github.com/arush15june'>chargE</a> <span class="glyphicon glyphicon-heart" aria-hidden='true'></span></span>
-    </div>
-  </div>
+  <footer class='text-center'><span>From The House of <a style = 'text-decoration:none' href='http://github.com/arush15june'>chargE</a> <span class="glyphicon glyphicon-heart" aria-hidden='true'></span></span></footer>
 </body>
 
 </html>
