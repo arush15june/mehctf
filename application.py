@@ -158,11 +158,21 @@ def question(qid = None):
     # in filename instead of going to /download/<question_id>
     toDownload = True
     if "link/" in reqdQuestion.filename[:5]:
-      reqdQuestion.filename = reqdQuestion.filename.replace("link/","")
-      app.logger.debug("found link in file, putting link for "+reqdQuestion.filename)
-      toDownload = False
+        reqdQuestion.filename = reqdQuestion.filename.replace("link/","")
+        app.logger.debug("found link in file, putting link for "+reqdQuestion.filename)
+        toDownload = False
+        
+    solvedByList = []
+    for user in models.User.query.all():
+        solvedqs = list(filter(lambda sq: sq.question_id == 1, user.solved_questions))
+        if(len(solvedqs) == 0):
+            continue
+        solvedq = solvedqs[0]
+        solver = {'username' : solvedq.username, 'solved_on' : solvedq.date}
+        solvedByList.append(solver)
+
     app.logger.debug("Sending Question No "+str(reqdQuestion.id)+" flag: "+reqdQuestion.flag)
-    return render_template("question.html",Question=reqdQuestion,toDownload=toDownload)
+    return render_template("question.html",Question=reqdQuestion, toDownload=toDownload, solvedByList=solvedByList)
 
   elif request.method == "POST":
     # Flag Checking Backend
