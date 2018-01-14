@@ -26,7 +26,10 @@ input:focus {
 .header {
 }
 
-
+.download-button {
+    border: 2px  #444 solid !important;
+    border-radius: 10px !important;
+}
 .questions {
     margin : 10px 10px 10px 10px;
 }

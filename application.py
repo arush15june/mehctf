@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, abort, send_from_directory
 from flask_admin import Admin
+# from flask_migrate import migrate
 from flask_admin.contrib.sqla import ModelView
 import helpers
 from functools import reduce
@@ -26,6 +27,12 @@ app.config['RECAPTCHA_PUBLIC_KEY'] = '6LcItjUUAAAAAIJnAqsuH3FOJm6mI5Y--ei7JXgl'
 app.config['RECAPTCHA_PRIVATE_KEY'] = '6LcItjUUAAAAAHBxk9C_QR6RLn4-49MNPoRDQuOG'
 
 app.secret_key = "m3hCtF"
+
+"""
+Flask-Migrate Config
+"""
+# migrate = migrate(app, db_session)
+
 
 """
 Admin Views
@@ -230,7 +237,7 @@ def download(qid):
     if reqdQuestion.filename == "#":
       abort(404)
     downloads  = os.path.join(app.root_path, app.config['DOWNLOAD_FOLDER'])
-    return send_from_directory(directory=downloads, filename=reqdQuestion.filename, as_attachement=True, attachment_filename=reqdQuestion.filename)
+    return send_from_directory(directory=downloads, filename=reqdQuestion.filename, as_attachement=True)
 
 @app.route("/scoreboard",methods=["GET"])
 def scoreboard():
