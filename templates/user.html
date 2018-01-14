@@ -16,21 +16,21 @@ MehCTF | {{ reqstdUser.username }}
     </div>
 </div>
 {% if solvedAnyQuestion %}
-<table class="table">
-    <thead>
+<table class="table table-striped">
+    <thead class='thead-inverse'>
         <tr>
-        <th>Question</th>
-        <th>Points</th>
-        <th>Solved On</th>
+        <th scope='col'>Question</th>
+        <th scope='col'>Points</th>
+        <th scp[e='col'>Solved On</th>
         </tr>
     </thead>
     <tbody style='font-size:1.5em;font-family:Josefin Sans Light'>
     {% for SolvedQuestion in reqstdUser.solved_questions %}
         {% if not SolvedQuestion.question.is_hidden %}
             <tr>
-            <td><a class = 'table-link' href='/question/{{ SolvedQuestion.question.id }}'>{{ SolvedQuestion.question.name }}</a></td>
-            <td>{{ SolvedQuestion.question.points }}</td>
-            <td>{{ SolvedQuestion.date | datetimeformat() }}</td>
+                <th scope='row'><a class = 'table-link' href='/question/{{ SolvedQuestion.question.id }}'>{{ SolvedQuestion.question.name }}</a></th>
+                <td>{{ SolvedQuestion.question.points }}</td>
+                <td>{{ SolvedQuestion.date | datetimeformat() }}</td>
             </tr>
         {% endif %}
     {% endfor %}
