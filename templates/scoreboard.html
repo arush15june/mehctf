@@ -5,25 +5,31 @@ MehCTF | Scoreboard
 {% endblock %}
 
 {% block body %}
-<table class="table">
-    <thead>
-        <tr>
-        <th>Rank</th>
-        <th>Username</th>
-        <th>Score</th>
-        </tr>
-    </thead>
-    <tbody class = "scoreboard-row" style='font-size:1.5em;font-family:Josefin Sans Light'>
-    {% for index, (userid, info) in scores %}
-        <tr>
-        <td>{{ index+1 }}</td>
-        <td><a class="table-link" href='/user/{{ info['username'] }}'>{{ info['username'] }}</a></td>
-        <td>{{ info['score'] }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<!-- <div class = 'refresh text-responsive form-control'>
+    <input type = 'checkbox' name='auto-refresh' id='auto-refresh-checkbox' onclick='toggleAutoRefresh(this)'>Auto Refresh
+</div>
+<script>
 
+</script> -->
 
-
+<div class='scoreboard'>
+    <table class="table">
+        <thead>
+            <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Score</th>
+            </tr>
+        </thead>
+        <tbody class = "scoreboard-row" style='font-size:1.5em;font-family:Josefin Sans Light'>
+        {% for index, (userid, info) in scores %}
+            <tr>
+            <td>{{ index+1 }}</td>
+            <td><a class="table-link" href='/user/{{ info['username'] }}' >{{ info['username'] | truncate(50) }}</a></td>
+            <td>{{ info['score'] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
