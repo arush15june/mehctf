@@ -53,8 +53,8 @@ class UserView(CTFView):
   column_searchable_list = ['username']
 # Flask-Admin View For Question Model
 class QuestionView(CTFView):
-  column_list = ['id', 'name', 'desc', 'flag', 'points', 'hide']
-  column_list = ['id','name','desc','flag','filename']
+  column_sortable_list = ['id','points']
+  column_list = ['id', 'hide', 'name', 'desc', 'points']
 
   
 """
