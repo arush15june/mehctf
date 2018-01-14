@@ -25,7 +25,7 @@ MehCTF | Scoreboard
         {% for index, (userid, info) in scores %}
             <tr>
             <td>{{ index+1 }}</td>
-            <td><a class="table-link" href='/user/{{ info['username'] }}' >{{ info['username']}}</a></td>
+            <td><a class="table-link" href='/user/{{ info['username'] }}' >{{ info['username'] | truncate(20)}}</a></td>
             <td>{{ info['score'] }}</td>
             </tr>
         {% endfor %}
