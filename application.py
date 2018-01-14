@@ -1,4 +1,5 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, jsonify, abort, send_from_directory
+from werkzeug.utils import secure_filename
 from flask_admin import Admin
 # from flask_migrate import migrate
 from flask_admin.contrib.sqla import ModelView
@@ -20,7 +21,6 @@ app = Flask(__name__)
 app.config['DEBUG'] = False
 app.config['DOWNLOAD_FOLDER'] = 'downloads'
 app.config['PORT'] = 8080
-
 # Recaptcha Keys
 
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6LcItjUUAAAAAIJnAqsuH3FOJm6mI5Y--ei7JXgl'
@@ -40,8 +40,8 @@ Admin Views
 # Basic Flask-Admin View Model
 class CTFView(ModelView):
 
-    def is_accessible(self):    
-        return current_user.is_authenticated and current_user.admin
+    # def is_accessible(self):    
+    #     return current_user.is_authenticated and current_user.admin
 
     def inaccessible_callback(self, name, **kwargs):
         # redirect to login page if user doesn't have access
@@ -55,6 +55,7 @@ class UserView(CTFView):
 class QuestionView(CTFView):
   column_list = ['id', 'name', 'desc', 'flag', 'points', 'hide']
   column_list = ['id','name','desc','flag','filename']
+
   
 """
 Flask-Admin Config
@@ -237,8 +238,38 @@ def download(qid):
     if reqdQuestion.filename == "#":
       abort(404)
     downloads  = os.path.join(app.root_path, app.config['DOWNLOAD_FOLDER'])
-    return send_from_directory(directory=downloads, filename=reqdQuestion.filename, as_attachement=True)
+    return send_from_directory(directory=downloads, filename=reqdQuestion.filename, as_attachment=True)
 
+ALLOWED_EXTENSIONS = set(['zip'])
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'uploaded_file' not in request.files:
+            flash('No file part')
+            return redirect(url_for('admin.index'))
+        file = request.files['uploaded_file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(url_for('admin.index'))
+        if file:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['DOWNLOAD_FOLDER'], filename))
+            flash('Uploaded Successfully')
+            return redirect(url_for('admin.index'))
+
+"""
+/scoreboard
+render the scoreboard with ranks sorted on the basis of points
+and who solves the question earliest
+"""
 @app.route("/scoreboard",methods=["GET"])
 def scoreboard():
   """
@@ -253,9 +284,10 @@ def scoreboard():
 
   scores = helpers.sortScoreDict(scores)
   """
-    enumerate generates indices(ranks) for the orderedDict
+    enumerate generates indices for the orderedDict
   """
   return render_template("scoreboard.html",scores=enumerate(scores.items()))
+
 """
 /user/<username>
 /user/
@@ -396,7 +428,6 @@ def change():
 
     else:
       return render_template("change.html", form=form, message="Invalid Input")  
-      
       
 if __name__ == '__main__':
   init_db()
