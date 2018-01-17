@@ -173,6 +173,8 @@ def question(qid = None):
         
     solvedByList = []
     for user in models.User.query.all():
+        if user.is_admin:
+            continue
         solvedqs = list(filter(lambda sq: sq.question_id == reqdQuestion.id, user.solved_questions))
         if(len(solvedqs) == 0):
             continue
