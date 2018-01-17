@@ -33,7 +33,7 @@ else:
   app.config['RECAPTCHA_PRIVATE_KEY'] = "YOUR_RECAPTCHA_PRIVATE_KEY"
 
 if os.environ.get('SECRET_KEY'):
-  app.secret_key = os.envrion.get("SECRET_KEY")
+  app.secret_key = os.environ.get("SECRET_KEY")
 else:
   app.secret_Key = "YOUR_SECRET_KEY"
 
