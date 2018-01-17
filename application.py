@@ -22,11 +22,20 @@ app.config['DEBUG'] = False
 app.config['DOWNLOAD_FOLDER'] = 'downloads'
 app.config['PORT'] = 8080
 # Recaptcha Keys
+if os.environ.get('RECAPTCHA_PUBLIC_KEY'):
+  app.config['RECAPTCHA_PUBLIC_KEY'] = os.environ.get('RECAPTCHA_PUBLIC_KEY')
+else:
+  app.config['RECAPTCHA_PUBLIC_KEY'] = "YOUR_RECAPTCHA_PUBLIC_KEY"
 
-app.config['RECAPTCHA_PUBLIC_KEY'] = '6LcItjUUAAAAAIJnAqsuH3FOJm6mI5Y--ei7JXgl'
-app.config['RECAPTCHA_PRIVATE_KEY'] = '6LcItjUUAAAAAHBxk9C_QR6RLn4-49MNPoRDQuOG'
+if os.environ.get('RECAPTCHA_PRIVATE_KEY'):
+  app.config['RECAPTCHA_PRIVATE_KEY'] = os.environ.get('RECAPTCHA_PRIVATE_KEY')
+else:
+  app.config['RECAPTCHA_PRIVATE_KEY'] = "YOUR_RECAPTCHA_PRIVATE_KEY"
 
-app.secret_key = "m3hCtF"
+if os.environ.get('SECRET_KEY'):
+  app.secret_key = os.envrion.get("SECRET_KEY")
+else:
+  app.secret_Key = "YOUR_SECRET_KEY"
 
 """
 Flask-Migrate Config
