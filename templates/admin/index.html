@@ -5,8 +5,6 @@
   <center><h1>Welcome, {{ user.username }}</h1></center>
   {% else %}
   <center><h1><a href="{{ url_for("login")}}">Login</a> with Admin Account</h1></center>
-  {% endif %}
-
   <div class = 'row'>
     <div class = 'col-xs-12 col-sm-12 col-md-6 col-lg-6'>
       <form action='/upload' method='POST' enctype="multipart/form-data">
@@ -19,4 +17,5 @@
       </form>
     </div>
   </div>
+  {% endif %}
 {% endblock %}
