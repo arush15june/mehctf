@@ -84,6 +84,8 @@ class Question(Base):
     @property
     def solved_by(self):
         try:
-            return SolvedQuestion.query.filter(SolvedQuestion.question_id == self.id).count()
+            solvedByList = SolvedQuestion.query.filter(SolvedQuestion.question_id == self.id)
+            solvedByListNoAdmin = filter(lambda x: not User.query.get(User.username == x.username).is_admin, solved_by_list)
+            return solvedByListNoAdmin
         except:
             return 0
