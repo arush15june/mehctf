@@ -2,6 +2,8 @@
 
 http://mehctf.herokuapp.com
 
+This is a CTF Platform designed for hacking workshops conducted in the college.
+
 # Instructions
 
 1. Clone 
